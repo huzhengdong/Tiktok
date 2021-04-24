@@ -42,7 +42,7 @@ public class UploadActivity extends AppCompatActivity {
     private EditText contentEditText ;
     private Retrofit retrofit;
 
-    @Override
+   /* @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initNetwork();
@@ -184,5 +184,5 @@ public class UploadActivity extends AppCompatActivity {
         return data;
     }
 
-
+*/
 }

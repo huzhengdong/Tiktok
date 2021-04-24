@@ -21,6 +21,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.VideoViewHolde
         notifyDataSetChanged();
     }
 
+    private OnClickListener mLongClickListener;
+
+    public void setClickListener(OnClickListener ClickListener) {
+        mLongClickListener = ClickListener;
+    }
+
+    public interface OnClickListener{
+        void onClick(String video_Url);
+    }
+
+
     @NonNull
     @Override
     public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -30,6 +41,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.VideoViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
+        if (mLongClickListener != null){
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mLongClickListener.onClick(data.get(position).getVideoUrl());
+                }
+
+            });
+        }
         holder.bind(data.get(position));
     }
 
@@ -52,9 +72,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.VideoViewHolde
         }
         public void bind(Message message){
             coverSD.setImageURI(message.getImageUrl());
-            fromTV.setText("FROM: "+message.getFrom());
-            contentTV.setText(message.getContent());
-            toTV.setText("TO: "+message.getTo());
+            fromTV.setText("Author: "+message.getUserName());
+            contentTV.setText("Created at: "+message.getCreatedAt());
+            toTV.setText("Updated at: "+message.getUpdatedAt());
         }
     }
 

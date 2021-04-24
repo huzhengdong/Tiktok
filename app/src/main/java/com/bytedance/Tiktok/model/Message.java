@@ -10,12 +10,10 @@ public class Message {
     private String Id;
     @SerializedName("student_id")
     private String studentId;
-    @SerializedName("from")
-    private String from;
-    @SerializedName("to")
-    private String to;
-    @SerializedName("content")
-    private String content;
+    @SerializedName("user_name")
+    private String userName;
+    @SerializedName("video_url")
+    private String videoUrl;
     @SerializedName("image_url")
     private String imageUrl;
     @SerializedName("image_w")
@@ -40,25 +38,18 @@ public class Message {
         return studentId;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
-    public String getFrom() {
-        return from;
-    }
-
-    public void setTo(String to) {
-        this.to = to;
-    }
-    public String getTo() {
-        return to;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
     }
-    public String getContent() {
-        return content;
+    public String getVideoUrl() {
+        return videoUrl;
     }
 
     public void setImageUrl(String imageUrl) {

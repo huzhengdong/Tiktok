@@ -16,12 +16,11 @@ public interface IApi {
     //TODO 4
     // 补全所有注解
     @Multipart
-    @POST("https://api-sjtu-camp-2021.bytedance.com/homework/invoke/messages")
+    @POST("https://api-sjtu-camp-2021.bytedance.com/homework/invoke/video")
     Call<UploadResponse> submitMessage(@Query("student_id") String studentId,
+                                     @Query("user_name")   String userName,
                                      @Query("extra_value") String extraValue,
-                                     @Part MultipartBody.Part from,
-                                     @Part MultipartBody.Part to,
-                                     @Part MultipartBody.Part content,
-                                     @Part MultipartBody.Part image,
-                                     @Header("token") String token);
+                                     @Part MultipartBody.Part coverImage,
+                                     @Part MultipartBody.Part video
+                                    );
 }

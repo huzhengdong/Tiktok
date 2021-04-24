@@ -29,7 +29,6 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "chapter5";
     private FeedAdapter adapter = new FeedAdapter();
     private List<Message> MessageList;
 
@@ -41,6 +40,20 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.rv_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+        adapter.setClickListener(new FeedAdapter.OnClickListener() {
+            @Override
+            public void onClick(String videoUrl) {
+                Intent playVideo = new Intent(MainActivity.this, videoPlay.class);
+                playVideo.putExtra("videoUrl", videoUrl);
+                startActivity(playVideo);
+            }
+        }
+        );
+
+
+
+
+
         findViewById(R.id.btn_upload).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,10 +102,10 @@ public class MainActivity extends AppCompatActivity {
 
     public List<Message> baseGetMessageFromRemote(String userName, String accept) {
         String urlStr =
-                String.format("https://api-sjtu-camp-2021.bytedance.com/homework/invoke/messages?student_id=%s", userName);
+                String.format("https://api-sjtu-camp-2021.bytedance.com/homework/invoke/video?student_id=%s", userName);
 
         if(userName==null) {
-            urlStr = String.format("https://api-sjtu-camp-2021.bytedance.com/homework/invoke/messages");
+            urlStr = String.format("https://api-sjtu-camp-2021.bytedance.com/homework/invoke/video");
         }
 
         MessageListResponse result = null;
