@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Tiktok</string>
     <string name="Tiktok" />
+    <string name="record">录制</string>
 </resources>
