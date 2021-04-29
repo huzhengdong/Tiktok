@@ -8,6 +8,7 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -16,9 +17,12 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bytedance.Tiktok.R;
@@ -43,12 +47,14 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     private int timeing = 0;
     public Handler handler = new Handler();
     private String mp4Path = "";
+    private ProgressBar progressBar;
 
     public static void startUI(Context context) {
         Intent intent = new Intent(context, com.bytedance.Tiktok.video.CustomCameraActivity.class);
         context.startActivity(intent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,25 +62,29 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         mSurfaceView = findViewById(R.id.surfaceview);
         mVideoView = findViewById(R.id.videoview);
         mRecordButton = findViewById(R.id.bt_record);
-        mTest = findViewById(R.id.rest_time);
+//        mTest = findViewById(R.id.rest_time);
         mHolder = mSurfaceView.getHolder();
         initCamera();
         mHolder.addCallback(this);
-
+        progressBar = findViewById(R.id.progressbar);
+        progressBar.setMax(1000);
+        progressBar.setMin(0);
     }
 
     Runnable runnable =new Runnable() {
         @Override
         public void run() {
-            if( isRecording && timeing < 10 ){
+            if( isRecording && timeing < 1000 ){
+                progressBar.setVisibility(View.VISIBLE);
                 timeing++;
-                mTest.setText("recording: "+timeing);
-                handler.postDelayed(this, 1000);
+//                mTest.setText("recording");
+                progressBar.setProgress((1000 - timeing));
+                handler.postDelayed(this, 1);
             }
-            else if(isRecording && timeing >= 10){
-//                record(mRecordButton);
-                mTest.setText("record stop");
+            else if(isRecording && timeing >= 1000){
+//                mTest.setText("record stop");
                 mRecordButton.callOnClick();
+                progressBar.setVisibility(View.INVISIBLE);
 
             }
             else{
@@ -173,6 +183,8 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
 //            mImageView.setVisibility(View.GONE);
             mVideoView.setVideoPath(mp4Path);
             mVideoView.start();
+            progressBar.setVisibility(View.INVISIBLE);
+//            mTest.setText("record stop");
         } else {
             if(prepareVideoRecorder()) {
                 timeing = 0;
