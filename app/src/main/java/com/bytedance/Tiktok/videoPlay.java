@@ -1,8 +1,10 @@
 package com.bytedance.Tiktok;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.graphics.PixelFormat;
@@ -13,9 +15,11 @@ import android.os.Handler;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -35,19 +39,53 @@ public class videoPlay extends AppCompatActivity {
     private TextView textViewTime;
     private TextView textViewCurrentPosition;
     private String videoUrl;
+    private ImageButton play_stop;
+    static boolean isPlay = true;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
+
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("MediaPlayer");
+        ActionBar actionBar = getSupportActionBar();
+
+        if (actionBar != null) {
+            actionBar.hide();
+
+        }
 
         setContentView(R.layout.activity_video_play);
         textViewCurrentPosition =findViewById(R.id.textViewCurrentPosition1);
         textViewTime =findViewById(R.id.textViewTime1);
         surfaceView = findViewById(R.id.surfaceView);
         seekBar = findViewById(R.id.seekbar);
+        play_stop =findViewById(R.id.btn);
         seekBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
+        textViewTime.setVisibility(View.INVISIBLE);
+        textViewCurrentPosition.setVisibility(View.INVISIBLE);
+        seekBar.setVisibility(View.INVISIBLE);
+        play_stop.setVisibility(View.INVISIBLE);
+        play_stop.setColorFilter(Color.WHITE);
+        play_stop.setImageResource(R.drawable.time_out);
+        //监听"播放/暂停"按钮
+        play_stop.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                if(isPlay){
+                    ((ImageButton)v).setImageResource(R.drawable.play_circle);
+                    player.pause();
+
+                }
+                else{
+                    ((ImageButton)v).setImageResource(R.drawable.time_out);
+                    player.start();
+
+                }
+                isPlay = !isPlay;
+            }
+        });
+
+
         Intent intent =getIntent();
         String videoUrl =intent.getStringExtra("videoUrl");
         handler = new Handler();
@@ -102,7 +140,7 @@ public class videoPlay extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        findViewById(R.id.buttonPlay).setOnClickListener(new View.OnClickListener() {
+        /*findViewById(R.id.buttonPlay).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 player.start();
@@ -114,7 +152,7 @@ public class videoPlay extends AppCompatActivity {
             public void onClick(View v) {
                 player.pause();
             }
-        });
+        });*/
 
 
     }
@@ -184,4 +222,35 @@ public class videoPlay extends AppCompatActivity {
         super.onDestroy();
         handler.removeCallbacks(runnable);
     }
+
+    private final Runnable hideSeekBarRunnable = new Runnable() {
+        @Override
+        public void run() {
+            textViewTime.setVisibility(View.INVISIBLE);
+            textViewCurrentPosition.setVisibility(View.INVISIBLE);
+            seekBar.setVisibility(View.INVISIBLE);
+            play_stop.setVisibility(View.INVISIBLE);
+        }
+    };
+
+    public boolean onTouchEvent(MotionEvent event){
+        int action = event.getAction();
+        switch (action){
+            case MotionEvent.ACTION_DOWN:
+                handler.removeCallbacks(hideSeekBarRunnable);
+                textViewTime.setVisibility(View.VISIBLE);
+                textViewCurrentPosition.setVisibility(View.VISIBLE);
+                seekBar.setVisibility(View.VISIBLE);
+                play_stop.setVisibility(View.VISIBLE);
+                handler.postDelayed(hideSeekBarRunnable,3000);
+                break;
+            default:
+                break;
+        }
+
+        return super.onTouchEvent(event);
+    }
+
+
+
 }
