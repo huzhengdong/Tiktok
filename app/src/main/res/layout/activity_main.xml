@@ -4,7 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@color/colorPurple"
+    >
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        app:lottie_autoPlay="false"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/material_wave_loading"
+        />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list"
         android:layout_width="match_parent"
@@ -16,76 +29,55 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        >
-    <LinearLayout
-
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
         android:orientation="horizontal"
-
-        >
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            >
-            <Button
-                android:id="@+id/btn_mine"
-                android:layout_width="100dp"
-                android:layout_height="48dp"
-                android:text="我的留言"
-                android:layout_gravity="center"
-                />
-        </FrameLayout>
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            >
-            <Button
-                android:id="@+id/btn_all"
-                android:layout_width="100dp"
-                android:layout_height="48dp"
-                android:text="留言板"
-                android:layout_gravity="center"
-                />
-        </FrameLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
+        android:background="@color/colorBlack"
         >
 
 
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            >
-            <Button
-                android:id="@+id/btn_upload"
-                android:layout_width="100dp"
-                android:layout_height="48dp"
-                android:text="上传"
-                android:layout_gravity="center"
-                />
-        </FrameLayout>
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            >
-            <Button
-                android:id="@+id/btn_socket"
-                android:layout_width="100dp"
-                android:layout_height="48dp"
-                android:text="socket"
-                android:layout_gravity="center"
-                />
-        </FrameLayout>
-    </LinearLayout>
+        <Button
+            android:id="@+id/btn_all"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:text="首页"
+            android:layout_gravity="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="20dp"
+            android:background="@color/colorBlack"
+            />
+
+
+        <Button
+            android:id="@+id/btn_upload"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:text="上传"
+            android:layout_gravity="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="20dp"
+            android:background="@color/colorBlack"
+            />
+
+
+        <Button
+            android:id="@+id/btn_record"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:text="@string/record"
+            android:layout_gravity="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="20dp"
+            android:background="@color/colorBlack"
+            />
+
+        <Button
+            android:id="@+id/btn_mine"
+            android:layout_width="100dp"
+            android:layout_height="48dp"
+            android:text="我的"
+            android:layout_gravity="center"
+            android:textColor="@color/colorWhite"
+            android:textSize="20dp"
+            android:background="@color/colorBlack"
+            />
     </LinearLayout>
 </RelativeLayout>

@@ -21,25 +21,31 @@
         android:layout_gravity="center"
         />
 
-    <EditText
-        android:id="@+id/et_to"
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/sd_video"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/bg_round_rect"
-        android:layout_marginHorizontal="20dp"
-        android:hint="TA的名字"
-        android:maxLines="1"
-        android:padding="6dp" />
+        android:layout_height="120dp"
+        app:actualImageScaleType="centerCrop"
+        app:placeholderImage="@drawable/bg_round_rect"
+        android:layout_margin="20dp"
+        />
+    <Button
+        android:id="@+id/btn_video"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        android:text="选择视频"
+        android:layout_gravity="center"
+        />
+
     <EditText
-        android:id="@+id/et_content"
+        android:id="@+id/et_extra_content"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:maxLines="3"
         android:layout_marginTop="40dp"
         android:padding="6dp"
         android:layout_marginHorizontal="20dp"
-        android:hint="想对TA说的话"
+        android:hint="备注"
         android:background="@drawable/bg_round_rect"
         />
 
