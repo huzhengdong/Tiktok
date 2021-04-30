@@ -66,9 +66,9 @@ public class FeedAdapter extends RecyclerView.Adapter<com.SJTU7.Tiktok.FeedAdapt
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         VideoItem videoItem = videoItemList.get(position);
         holder.coverSD.setImageURI(videoItem.getImageUrl());
-        holder.fromTV.setText("Author: "+videoItem.getUserName());
-        holder.contentTV.setText("Created at: "+videoItem.getCreatedAt());
-        holder.toTV.setText("Updated at: "+videoItem.getUpdatedAt());
+        holder.fromTV.setText("@"+videoItem.getUserName());
+        holder.contentTV.setText(videoItem.getContent());
+        holder.toTV.setText("Published at: "+videoItem.getCreatedAt());
     }
 
     @Override

@@ -12,6 +12,8 @@ public class VideoItem {
     private String studentId;
     @SerializedName("user_name")
     private String userName;
+    @SerializedName("extra_value")
+    private String content;
     @SerializedName("video_url")
     private String videoUrl;
     @SerializedName("image_url")
@@ -36,6 +38,13 @@ public class VideoItem {
     }
     public String getStudentId() {
         return studentId;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+    public String getContent() {
+        return content;
     }
 
     public void setUserName(String userName) {
