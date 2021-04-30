@@ -168,7 +168,7 @@ public class UploadActivity extends AppCompatActivity {
         // TODO NEW
         //  更改 Body 中的内容，来自前端界面
         MultipartBody.Part image_part = MultipartBody.Part.createFormData(
-                "image",
+                "cover_image",
                 "cover.png",
                 RequestBody.create(MediaType.parse("multipart/form_data"), coverImageData)
         );
