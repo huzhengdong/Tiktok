@@ -17,6 +17,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +51,8 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     public Handler handler = new Handler();
     private String mp4Path = "";
     private ProgressBar progressBar;
+    private ImageButton btn_yes;
+    private ImageButton btn_no;
 
     public static void startUI(Context context) {
         Intent intent = new Intent(context, CustomCameraActivity.class);
@@ -81,7 +84,8 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         progressBar = findViewById(R.id.progressbar);
         progressBar.setMax(1000);
         progressBar.setMin(0);
-
+        btn_yes = findViewById(R.id.btn_yes);
+        btn_no = findViewById(R.id.btn_no);
     }
 
     Runnable runnable =new Runnable() {
@@ -191,6 +195,17 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         return mediaFile.getAbsolutePath();
     }
 
+    public void pressNo(View view){
+        mVideoView.setVisibility(View.INVISIBLE);
+        btn_yes.setVisibility(View.INVISIBLE);
+        btn_no.setVisibility(View.INVISIBLE);
+        mRecordButton.setVisibility(View.VISIBLE);
+    }
+    public void pressYes(View view){
+        Intent intent = new Intent(CustomCameraActivity.this,UploadActivity.class);
+        startActivity(intent);
+    }
+
 
     public void record(View view) {
         if (isRecording) {
@@ -212,6 +227,9 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
             mCamera.lock();
 
             mVideoView.setVisibility(View.VISIBLE);
+            btn_yes.setVisibility(View.VISIBLE);
+            btn_no.setVisibility(View.VISIBLE);
+            mRecordButton.setVisibility(View.INVISIBLE);
 //            mImageView.setVisibility(View.GONE);
             mVideoView.setVideoPath(mp4Path);
             mVideoView.start();
