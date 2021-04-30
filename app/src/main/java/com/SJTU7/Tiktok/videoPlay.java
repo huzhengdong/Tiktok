@@ -174,7 +174,7 @@ public class videoPlay extends AppCompatActivity {
                                       boolean fromUser) {
             int duration = player.getDuration();
             progress = seekBar.getProgress();
-            if (player.isPlaying()&&fromUser) {
+            if (fromUser) {
                 // 设置当前播放的位置
                 player.seekTo(duration*progress/100);
             }
