@@ -1,7 +1,9 @@
 package com.SJTU7.Tiktok;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
@@ -22,14 +24,19 @@ import android.widget.VideoView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class CustomCameraActivity extends AppCompatActivity implements SurfaceHolder.Callback {
 
+    private final static int PERMISSION_REQUEST_CODE = 1001;
     private SurfaceView mSurfaceView;
     private Camera mCamera;
     private MediaRecorder mMediaRecorder;
@@ -62,6 +69,7 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         mHolder = mSurfaceView.getHolder();
         try
         {
+            requestPermission();
             initCamera();
         }catch (Exception e)
         {
@@ -99,6 +107,24 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         }
     };
 
+    private void requestPermission() {
+        boolean hasCameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        boolean hasAudioPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+        if (hasCameraPermission && hasAudioPermission) {
+
+        } else {
+            List<String> permission = new ArrayList<String>();
+            if (!hasCameraPermission) {
+                permission.add(Manifest.permission.CAMERA);
+            }
+            if (!hasAudioPermission) {
+                permission.add(Manifest.permission.RECORD_AUDIO);
+            }
+            ActivityCompat.requestPermissions(this, permission.toArray(new String[permission.size()]), PERMISSION_REQUEST_CODE);
+        }
+
+    }
+
     private void initCamera() {
         mCamera = Camera.open();
         Camera.Parameters parameters = mCamera.getParameters();
@@ -108,6 +134,7 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         parameters.set("rotation", 90);
         mCamera.setParameters(parameters);
         mCamera.setDisplayOrientation(90);
+
     }
 
     private boolean prepareVideoRecorder() {
