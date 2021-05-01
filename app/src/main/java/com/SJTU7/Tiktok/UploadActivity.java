@@ -183,7 +183,7 @@ public class UploadActivity extends AppCompatActivity {
             @Override
             public void run() {
                 Call<UploadResponse> call = service.submitMessage(
-                        Constants.STUDENT_ID,
+                        Constants.USER_ID,
                         Constants.USER_NAME,
                         content,
                         image_part,

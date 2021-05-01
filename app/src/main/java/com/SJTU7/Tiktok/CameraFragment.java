@@ -13,11 +13,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -37,6 +39,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
@@ -86,6 +89,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
             initCamera();
         }catch (Exception e)
         {
+            e.printStackTrace();
             Toast.makeText(getContext(),"相机初始化失败",Toast.LENGTH_SHORT).show();
         }
 
@@ -156,12 +160,12 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
 
     private void initCamera() {
         mCamera = Camera.open();
-        Camera.Parameters parameters = mCamera.getParameters();
-        parameters.setPictureFormat(ImageFormat.JPEG);
-        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-        parameters.set("orientation", "portrait");
-        parameters.set("rotation", 90);
-        mCamera.setParameters(parameters);
+//        Camera.Parameters parameters = mCamera.getParameters();
+//        parameters.setPictureFormat(ImageFormat.JPEG);
+//        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+//        parameters.set("orientation", "portrait");
+//        parameters.set("rotation", 90);
+//        mCamera.setParameters(parameters);
         mCamera.setDisplayOrientation(90);
 
     }
@@ -308,7 +312,14 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
     public void onResume() {
         super.onResume();
         if (mCamera == null) {
-            initCamera();
+            try {
+                initCamera();
+            }
+            catch(Exception e)
+            {
+                Toast.makeText(getContext(),"相机初始化失败", Toast.LENGTH_SHORT).show();
+            }
+
         }
         mCamera.startPreview();
     }

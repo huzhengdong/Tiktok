@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -75,11 +76,14 @@ public class HomeFragment extends Fragment
             public void run() {
                 animationView.setVisibility(View.GONE);
                 animationView.pauseAnimation();
-                if(response[0].success)
+                if(response[0]!=null)
                 {
                     VideoList = response[0].feeds;
                     adapter.setData(VideoList);
                 }
+                else {
+                    Toast.makeText(getContext(),"网络错误",Toast.LENGTH_SHORT).show();
+                    }
 
                 recyclerView.setVisibility(View.VISIBLE);
             }
@@ -126,10 +130,6 @@ public class HomeFragment extends Fragment
         }  catch (Exception e) {
             e.printStackTrace();
             //Toast.makeText(this, "网络异常" + e.toString(), Toast.LENGTH_SHORT).show();
-        }
-        if(result==null)
-        {
-            result = new VideoItemListResponse();
         }
         return result;
     }

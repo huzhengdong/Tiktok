@@ -10,9 +10,4 @@ public class VideoItemListResponse {
     @SerializedName("success")
     public boolean success;
 
-    public VideoItemListResponse()
-    {
-        feeds = null;
-        success = false;
-    }
 }

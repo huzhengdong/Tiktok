@@ -43,6 +43,7 @@ public class MineFragment extends Fragment
     private EditText editName;
     private Button btn;
     private TextView user_id;
+    private String name;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,7 +60,7 @@ public class MineFragment extends Fragment
         editName = view.findViewById(R.id.edit_name);
         editName.setText(Constants.USER_NAME);
         user_id = view.findViewById(R.id.user_id);
-        user_id.setText(Constants.STUDENT_ID);
+        user_id.setText(Constants.USER_ID);
         btn = view.findViewById(R.id.btn);
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -72,12 +73,15 @@ public class MineFragment extends Fragment
                     btn.setText("确认");
                 }
                 else {
-                    if(editName.getText().length()>0)
+                    name = editName.getText().toString();
+                    if(name.length()>0)
                     {
-                        textName.setText(editName.getText());
+                        textName.setText(name);
                         textName.setVisibility(View.VISIBLE);
                         editName.setVisibility(View.GONE);
                         btn.setText("修改昵称");
+                        Constants.USER_NAME = name;
+                        Log.e("cname",Constants.USER_NAME);
                     }
                     else {
                         Toast.makeText(getContext(),"昵称禁止为空",Toast.LENGTH_SHORT).show();
@@ -91,7 +95,7 @@ public class MineFragment extends Fragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getData(Constants.STUDENT_ID);
+        getData(Constants.USER_ID);
     }
 
     private void getData(String studentId){

@@ -125,7 +125,7 @@ public class UploadFragment extends Fragment {
         //TODO 3
         // 创建Retrofit实例
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://api-sjtu-camp-2021.bytedance.com/homework/invoke/")
+                .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         // 生成api对象
@@ -189,7 +189,7 @@ public class UploadFragment extends Fragment {
             @Override
             public void run() {
                 Call<UploadResponse> call = service.submitMessage(
-                        Constants.STUDENT_ID,
+                        Constants.USER_ID,
                         Constants.USER_NAME,
                         content,
                         image_part,
@@ -201,6 +201,7 @@ public class UploadFragment extends Fragment {
                             @Override
                             public void run() {
                                 Log.d("upload", "run: back");
+                                Toast.makeText(getContext(),"上传成功",Toast.LENGTH_SHORT).show();
                                 //Intent intent = new Intent(com.SJTU7.Tiktok.UploadActivity.this, MainActivity.class);
                                 //startActivity(intent);
                             }
@@ -208,6 +209,7 @@ public class UploadFragment extends Fragment {
                     }
                 } catch(IOException e){
                     e.printStackTrace();
+                    Toast.makeText(getContext(),"上传失败",Toast.LENGTH_SHORT).show();
                 }
             }
         }).start();

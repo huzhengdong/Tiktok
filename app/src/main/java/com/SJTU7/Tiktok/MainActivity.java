@@ -11,6 +11,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.SJTU7.Tiktok.VideoItem;
@@ -20,7 +21,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.SJTU7.Tiktok.VideoItemListResponse;
-
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
@@ -35,6 +35,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -48,12 +49,31 @@ public class MainActivity extends AppCompatActivity {
     private CameraFragment cameraFragment;
     private UploadFragment uploadFragment;
     private MineFragment mineFragment;
+    private SharedPreferences spdata;
+    private SharedPreferences.Editor editor;
+    private String user_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Fresco.initialize(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        spdata = getSharedPreferences("data",MODE_PRIVATE);
+        editor = spdata.edit();
+        user_id = spdata.getString("id","-1");
+        if(user_id.equals("-1"))
+        {
+            user_id = String.valueOf(Calendar.getInstance().getTimeInMillis());
+            Constants.USER_ID = user_id;
+            editor.putString("id",user_id);
+            editor.putString("name",Constants.USER_NAME);
+            editor.apply();
+        }
+        else {
+                Constants.USER_ID = user_id;
+                Constants.USER_NAME = spdata.getString("name","#");
+            }
+
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         ViewPager pager = findViewById(R.id.view_pager);
         pager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -104,5 +124,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //uploadFragment.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e("des",Constants.USER_NAME);
+        editor.putString("name",Constants.USER_NAME);
+        editor.apply();
     }
 }
