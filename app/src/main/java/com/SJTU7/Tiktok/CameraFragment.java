@@ -71,6 +71,12 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
         mSurfaceView = view.findViewById(R.id.surfaceview);
         mVideoView = view.findViewById(R.id.videoview);
         mRecordButton = view.findViewById(R.id.bt_record);
+        mRecordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                record(v);
+            }
+        });
 
 //        mTest = findViewById(R.id.rest_time);
         mHolder = mSurfaceView.getHolder();
@@ -88,7 +94,19 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
         progressBar.setMax(1000);
         progressBar.setMin(0);
         btn_yes = view.findViewById(R.id.btn_yes);
+        btn_yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pressYes(v);
+            }
+        });
         btn_no = view.findViewById(R.id.btn_no);
+        btn_no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pressNo(v);
+            }
+        });
         return view;
     }
     @Override
@@ -300,4 +318,6 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
         super.onPause();
         mCamera.stopPreview();
     }
+
+
 }

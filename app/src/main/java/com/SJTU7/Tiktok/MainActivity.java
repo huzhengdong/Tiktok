@@ -1,8 +1,11 @@
 package com.SJTU7.Tiktok;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -19,6 +22,7 @@ import android.view.View;
 import com.SJTU7.Tiktok.VideoItemListResponse;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -30,6 +34,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -39,125 +44,65 @@ public class MainActivity extends AppCompatActivity {
     private List<VideoItem> VideoList;
     private LottieAnimationView animationView;
     private RecyclerView recyclerView;
-
+    private HomeFragment homeFragment;
+    private CameraFragment cameraFragment;
+    private UploadFragment uploadFragment;
+    private MineFragment mineFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Fresco.initialize(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        animationView = findViewById(R.id.animation_view);
-        recyclerView = findViewById(R.id.rv_list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        ViewPager pager = findViewById(R.id.view_pager);
+        pager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
 
-        getData(null);
-        findViewById(R.id.btn_upload).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,UploadActivity.class);
-                startActivity(intent);
-            }
-        });
-        findViewById(R.id.btn_mine).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getData(Constants.STUDENT_ID);
-            }
-        });
-
-        findViewById(R.id.btn_all).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getData(null);
-            }
-        });
-        findViewById(R.id.btn_record).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CustomCameraActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
-    private void getData(String studentId){
-        final VideoItemListResponse[] response = new VideoItemListResponse[1];
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                response[0] =  baseGetMessageFromRemote(
-                        studentId, "application/json");
-            }
-        }).start();
-        //UI必须在主线程更新 而请求时间可能略长，大于setData的时间，导致更新UI完成时data并没有更新
-        //因此连续点击两下才会有反应
-        //解决方法：延迟更新UI 考虑到用户体验加上进度条
-        recyclerView.setVisibility(View.GONE);
-        animationView.setVisibility(View.VISIBLE);
-        animationView.playAnimation();
-        getWindow().getDecorView().postDelayed(new Runnable() {
-            @SuppressLint("WrongConstant")
-            @Override
-            public void run() {
-                animationView.setVisibility(View.GONE);
-                animationView.pauseAnimation();
-                if(response[0].success)
-                {
-                    VideoList = response[0].feeds;
-                    adapter.setData(VideoList);
+            public Fragment getItem(int position) {
+                switch (position) {
+                    case 0:
+                        homeFragment = new HomeFragment();
+                        return homeFragment;
+                    case 1:
+                        cameraFragment = new CameraFragment();
+                        return cameraFragment;
+                    case 2:
+                        uploadFragment = new UploadFragment();
+                        return uploadFragment;
+                    case 3:
+                        mineFragment = new MineFragment();
+                        return mineFragment;
                 }
-
-                recyclerView.setVisibility(View.VISIBLE);
+                return new HomeFragment();
             }
-        }, 1000);
+
+            @Override
+            public int getCount() {
+                return 4;
+            }
+
+            @Nullable
+            @Override
+            public CharSequence getPageTitle(int position) {
+                switch (position) {
+                    case 0:
+                        return "首页";
+                    case 1:
+                        return "录制";
+                    case 2:
+                        return "上传";
+                    case 3:
+                        return "我的";
+                }
+                return "首页";
+            }
+        });
+        tabLayout.setupWithViewPager(pager);
 
     }
-
-    public VideoItemListResponse baseGetMessageFromRemote(String userName, String accept) {
-        String urlStr =
-                String.format("https://api-sjtu-camp-2021.bytedance.com/homework/invoke/video?student_id=%s", userName);
-
-        if(userName==null) {
-            urlStr = String.format("https://api-sjtu-camp-2021.bytedance.com/homework/invoke/video");
-        }
-
-        VideoItemListResponse result = null;
-        try {
-            URL url = new URL(urlStr);
-
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-            conn.setConnectTimeout(6000);
-
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("accept", accept);
-
-            if (conn.getResponseCode() == 200) {
-
-                InputStream in = conn.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-
-                result = new Gson().fromJson(reader, new TypeToken<VideoItemListResponse>() {
-                }.getType());
-                result.success = true;
-                reader.close();
-                in.close();
-
-            } else {
-                // 错误处理
-                Log.e("cuowu","cuowu");
-            }
-            conn.disconnect();
-
-        }  catch (Exception e) {
-            e.printStackTrace();
-            //Toast.makeText(this, "网络异常" + e.toString(), Toast.LENGTH_SHORT).show();
-        }
-        if(result==null)
-        {
-            result = new VideoItemListResponse();
-        }
-        return result;
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //uploadFragment.onActivityResult(requestCode, resultCode, data);
     }
 }

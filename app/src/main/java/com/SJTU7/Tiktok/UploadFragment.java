@@ -80,15 +80,18 @@ public class UploadFragment extends Fragment {
         });
         return view;
     }
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Log.e("123","1234");
         if (REQUEST_CODE_COVER_IMAGE == requestCode) {
             if (resultCode == Activity.RESULT_OK) {
                 coverImageUri = data.getData();
                 coverSD.setImageURI(coverImageUri);
-
                 if (coverImageUri != null) {
                     Log.d(TAG, "pick cover image " + coverImageUri.toString());
                 } else {
@@ -99,7 +102,6 @@ public class UploadFragment extends Fragment {
                 Log.d(TAG, "file pick fail");
             }
         }
-
         // TODO NEW
         //  获取和展示视频的Uri
         if (REQUEST_CODE_VIDEO == requestCode) {

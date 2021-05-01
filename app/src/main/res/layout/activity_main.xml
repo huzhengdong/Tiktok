@@ -1,83 +1,76 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="@color/colorBlack"
-    >
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animation_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        app:lottie_autoPlay="false"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/material_wave_loading"
-        />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_list"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/ll_btn"
-        />
-    <LinearLayout
-        android:id="@+id/ll_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:background="@color/colorBlack"
-        >
+        tools:context=".MainActivity">
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:tabIndicatorHeight="0dp"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
+
+<!--    <LinearLayout-->
+<!--        android:id="@+id/ll_btn"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:background="@color/colorBlack"-->
+<!--        >-->
 
 
-        <Button
-            android:id="@+id/btn_all"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:text="首页"
-            android:layout_gravity="center"
-            android:textColor="@color/colorWhite"
-            android:textSize="20dp"
-            android:background="@color/colorBlack"
-            />
+<!--        <Button-->
+<!--            android:id="@+id/btn_all"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="48dp"-->
+<!--            android:text="首页"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:textColor="@color/colorWhite"-->
+<!--            android:textSize="20dp"-->
+<!--            android:background="@color/colorBlack"-->
+<!--            />-->
 
 
-        <Button
-            android:id="@+id/btn_upload"
-            android:layout_width="100dp"
-            android:layout_height="48dp"
-            android:text="上传"
-            android:layout_gravity="center"
-            android:textColor="@color/colorWhite"
-            android:textSize="20dp"
-            android:background="@color/colorBlack"
-            />
+<!--        <Button-->
+<!--            android:id="@+id/btn_upload"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="48dp"-->
+<!--            android:text="上传"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:textColor="@color/colorWhite"-->
+<!--            android:textSize="20dp"-->
+<!--            android:background="@color/colorBlack"-->
+<!--            />-->
 
 
-        <Button
-            android:id="@+id/btn_record"
-            android:layout_width="100dp"
-            android:layout_height="48dp"
-            android:text="@string/record"
-            android:layout_gravity="center"
-            android:textColor="@color/colorWhite"
-            android:textSize="20dp"
-            android:background="@color/colorBlack"
-            />
+<!--        <Button-->
+<!--            android:id="@+id/btn_record"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="48dp"-->
+<!--            android:text="@string/record"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:textColor="@color/colorWhite"-->
+<!--            android:textSize="20dp"-->
+<!--            android:background="@color/colorBlack"-->
+<!--            />-->
 
-        <Button
-            android:id="@+id/btn_mine"
-            android:layout_width="100dp"
-            android:layout_height="48dp"
-            android:text="我的"
-            android:layout_gravity="center"
-            android:textColor="@color/colorWhite"
-            android:textSize="20dp"
-            android:background="@color/colorBlack"
-            />
-    </LinearLayout>
-</RelativeLayout>
+<!--        <Button-->
+<!--            android:id="@+id/btn_mine"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="48dp"-->
+<!--            android:text="我的"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:textColor="@color/colorWhite"-->
+<!--            android:textSize="20dp"-->
+<!--            android:background="@color/colorBlack"-->
+<!--            />-->
+<!--    </LinearLayout>-->
