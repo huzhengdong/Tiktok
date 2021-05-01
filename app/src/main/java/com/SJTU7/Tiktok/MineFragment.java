@@ -3,12 +3,14 @@ package com.SJTU7.Tiktok;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -81,7 +83,8 @@ public class MineFragment extends Fragment
                         editName.setVisibility(View.GONE);
                         btn.setText("修改昵称");
                         Constants.USER_NAME = name;
-                        Log.e("cname",Constants.USER_NAME);
+                        InputMethodManager m = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        m.hideSoftInputFromWindow(editName.getWindowToken(), 0);
                     }
                     else {
                         Toast.makeText(getContext(),"昵称禁止为空",Toast.LENGTH_SHORT).show();

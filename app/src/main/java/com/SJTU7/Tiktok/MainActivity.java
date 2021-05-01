@@ -127,10 +127,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.e("des",Constants.USER_NAME);
+    protected void onStop() {//写在onDestroy会导致没有执行完程序已经结束了
+        super.onStop();
         editor.putString("name",Constants.USER_NAME);
         editor.apply();
     }
+
 }
