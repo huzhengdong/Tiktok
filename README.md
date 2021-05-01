@@ -7,5 +7,6 @@
 
 ## 待改进
 - Camera的pressYes函数涉及到Fragment的转换 还没有实现
+- 手动切换每个Fragment的时候状态有点问题
 - 两个人完全同时使用时会导致id一样
 
