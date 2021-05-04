@@ -36,4 +36,6 @@ dependencies {
     implementation 'com.facebook.fresco:fresco:2.4.0'
     implementation 'com.facebook.fresco:animated-webp:2.4.0'
     implementation 'com.facebook.fresco:webpsupport:2.4.0'
+    implementation 'com.iceteck.silicompressorr:silicompressor:2.2.4'
+    implementation 'com.googlecode.mp4parser:isoparser:1.1.22'
 }

@@ -2,10 +2,14 @@ package com.bytedance.practice5;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -19,9 +23,12 @@ import com.bytedance.practice5.model.MessageListResponse;
 import com.bytedance.practice5.model.UploadResponse;
 import com.bytedance.practice5.socket.SocketActivity;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.iceteck.silicompressorr.SiliCompressor;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -44,6 +51,7 @@ public class UploadActivity extends AppCompatActivity {
     private IApi service;
     private Uri coverImageUri;
     private Uri videoUri;
+    public String compressPath;
 
     private SimpleDraweeView coverSD;
     private SimpleDraweeView videoSD;
@@ -108,10 +116,37 @@ public class UploadActivity extends AppCompatActivity {
                 videoSD.setImageURI(videoUri);
 
                 if (videoUri != null) {
-                    Log.d(TAG, "pick video " + videoUri.toString());
+                    Log.d(TAG, "pick video - videoUri: " + videoUri.toString());
                 } else {
                     Log.d(TAG, "uri2File fail " + data.getData());
                 }
+
+//                Log.d(TAG, "onActivityResult - context: " + UploadActivity.this.toString());
+//                String videoPath = getPath(UploadActivity.this, videoUri);
+//                Log.d(TAG, "onActivityResult - videopath: " + videoPath);
+
+                new Thread(){
+                    @Override
+                    public void run(){
+                        super.run();
+                        try{
+                            /**
+                             * 视频压缩
+                             * 第一个参数：视频源文件路径
+                             * 第二个参数：压缩后视频保存的路径
+                             * Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) 是系统提供的公共目录
+                             */
+                            String systemPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+                            Log.d(TAG, "systemPath: "+ systemPath);
+//                            String compressPath = SiliCompressor.with(UploadActivity.this).compressVideo(videoPath, systemPath);
+                            compressPath = SiliCompressor.with(UploadActivity.this).compressVideo(videoUri, systemPath);
+                            Log.d(TAG, "compressPath: "+ compressPath);
+
+                        } catch (URISyntaxException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
 
             } else {
                 Log.d(TAG, "file pick fail");
@@ -139,10 +174,35 @@ public class UploadActivity extends AppCompatActivity {
         startActivityForResult(intent, requestCode);
     }
 
+    // TODO
+    //  将 Uri 转换为 path
+    private String getPath(Context context, Uri uri) {
+        String path = null;
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        if (cursor == null) {
+            return null;
+        }
+        if (cursor.moveToFirst()) {
+            try {
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        cursor.close();
+        return path;
+    }
+
     // TODO NEW
     //  提交时的注意事项
     private void submit() {
         byte[] coverImageData = readDataFromUri(coverImageUri);
+        // 将 path 转换为 Uri
+        videoUri = Uri.parse("file://"+compressPath);
+        Log.d(TAG, "videoUriNew:" + videoUri.toString());
+//        File videoPath = new File("/storage/emulated/0/Android/data/com.bytedance.sjtu2021/files/Movies/20210504_151809.mp4");
+//        videoUri = Uri.fromFile(videoPath);
+        Log.d(TAG, "submit - videoUri: " + videoUri);
         byte[] videoData = readDataFromUri(videoUri);
 
         if (coverImageData == null || coverImageData.length == 0) {
@@ -172,7 +232,7 @@ public class UploadActivity extends AppCompatActivity {
         // TODO NEW
         //  更改 Body 中的内容，来自前端界面
         MultipartBody.Part image_part = MultipartBody.Part.createFormData(
-                "image",
+                "cover_image",
                 "cover.png",
                 RequestBody.create(MediaType.parse("multipart/form_data"), coverImageData)
         );
@@ -216,6 +276,7 @@ public class UploadActivity extends AppCompatActivity {
         try {
             InputStream is = getContentResolver().openInputStream(uri);
             data = Util.inputStream2bytes(is);
+            Log.d(TAG, "readDataFromUri: here");
 
         } catch (Exception e) {
             e.printStackTrace();
