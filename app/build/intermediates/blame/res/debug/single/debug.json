@@ -8,12 +8,12 @@
         "source": "D:\\sunyue_files\\bytedance\\greatwork\\app\\src\\main\\res\\mipmap-anydpi-v26\\ic_launcher.xml"
     },
     {
-        "merged": "D:\\sunyue_files\\bytedance\\greatwork\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi_ic_launcher.png.flat",
-        "source": "D:\\sunyue_files\\bytedance\\greatwork\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.png"
-    },
-    {
         "merged": "D:\\sunyue_files\\bytedance\\greatwork\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxhdpi_ic_launcher_round.png.flat",
         "source": "D:\\sunyue_files\\bytedance\\greatwork\\app\\src\\main\\res\\mipmap-xxhdpi\\ic_launcher_round.png"
+    },
+    {
+        "merged": "D:\\sunyue_files\\bytedance\\greatwork\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-hdpi_ic_launcher.png.flat",
+        "source": "D:\\sunyue_files\\bytedance\\greatwork\\app\\src\\main\\res\\mipmap-hdpi\\ic_launcher.png"
     },
     {
         "merged": "D:\\sunyue_files\\bytedance\\greatwork\\app\\build\\intermediates\\res\\merged\\debug\\layout_activity_main.xml.flat",
@@ -30,6 +30,10 @@
     {
         "merged": "D:\\sunyue_files\\bytedance\\greatwork\\app\\build\\intermediates\\res\\merged\\debug\\drawable_ic_launcher_background.xml.flat",
         "source": "D:\\sunyue_files\\bytedance\\greatwork\\app\\src\\main\\res\\drawable\\ic_launcher_background.xml"
+    },
+    {
+        "merged": "D:\\sunyue_files\\bytedance\\greatwork\\app\\build\\intermediates\\res\\merged\\debug\\raw_material_wave_loading.json.flat",
+        "source": "D:\\sunyue_files\\bytedance\\greatwork\\app\\src\\main\\res\\raw\\material_wave_loading.json"
     },
     {
         "merged": "D:\\sunyue_files\\bytedance\\greatwork\\app\\build\\intermediates\\res\\merged\\debug\\drawable_bg_round_rect.xml.flat",

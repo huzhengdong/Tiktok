@@ -305,6 +305,48 @@ E/AndroidRuntime: FATAL EXCEPTION: Thread-4
 
 ![image-20210504154249082](https://typoraim.oss-cn-shanghai.aliyuncs.com/image/image-20210504154249082.png)
 
+
+
+### 等待时间
+
+当文件比较大时，压缩会需要一点时间
+
+这个时候路径就会是空的，那么读到的数据也是空的
+
+怎么样保证压缩完毕，然后再读取路径呢？
+
+> 参考1：[安卓开发中如何实现主线程等待子线程执行_曹同学的博客-CSDN博客_android 主线程等待子线程](https://blog.csdn.net/crh170/article/details/90060811)
+
+这种方法直接使用一个 callback 的方法修改 flag，以达到目的
+
+直接说结论：不行。
+
+会导致问题：`E/tmessages: Surface frame wait timed out`，前面板会无响应而关闭
+
+> 参考2：[主线程如何等待子线程的结束？（非阻塞等待）-CSDN论坛](https://bbs.csdn.net/topics/310243308)
+
+给出了两种方法
+
+（1）主线程WaitForSingleObject()子线程
+
+（2）子线程退出时，给主线程发送PostThreadMessage消息
+
+能够做到子线程完成后发送消息，接下来需要根据消息进行合适的程序调用：
+
+（1）比如在没有压缩完成前，提交按钮是灰色的
+
+（2）可以添加一点动画，在提交完成前，转圈圈表示正在压缩
+
+#### 目前的方法
+
+1. 添加了一个 lottie 动画
+2. 添加了 Handler，用来接收子线程信息，并修改主线程UI
+3. 当子线程在进行压缩时，主线程中：
+   1. lottie 动画展示出来 【使用 FramView 的覆盖特性 + `view.bringToFront()`方法修改控件的层次】 
+   2. 背景为灰色，略带透明 【`v.getBackground().setAlpha(100);//0~255透明度值`】
+   3. “提交”按钮禁用【`btn_v.setEnabled(false);`】
+4. 当压缩完毕，lottie动画消失，提交按钮释放
+
 # 其他
 
 `ContextCompat.getExternalFilesDirs`

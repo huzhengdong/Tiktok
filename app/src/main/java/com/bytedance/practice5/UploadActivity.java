@@ -1,6 +1,8 @@
 package com.bytedance.practice5;
 
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,16 +11,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bytedance.practice5.model.MessageListResponse;
 import com.bytedance.practice5.model.UploadResponse;
 import com.bytedance.practice5.socket.SocketActivity;
@@ -46,16 +51,22 @@ public class UploadActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_VIDEO = 202;
     private static final String COVER_IMAGE_TYPE = "image/*";
     private static final String VIDEO_TYPE = "video/*";
+
+    private static final int MSG_START_COMPRESS = 0;
+    private static final int MSG_END_COMPRESS = 1;
+
     private Retrofit retrofit;
 //    private IApi api;
     private IApi service;
     private Uri coverImageUri;
     private Uri videoUri;
     public String compressPath;
+    public Boolean flag = false;
 
     private SimpleDraweeView coverSD;
     private SimpleDraweeView videoSD;
-    private EditText extraContentEditText ;
+    private EditText extraContentEditText;
+    private LottieAnimationView animationView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,6 +75,7 @@ public class UploadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_upload);
         coverSD = findViewById(R.id.sd_cover);
         videoSD = findViewById(R.id.sd_video);
+        animationView = findViewById(R.id.animation_view);
 
         extraContentEditText = findViewById(R.id.et_extra_content);
 
@@ -121,10 +133,6 @@ public class UploadActivity extends AppCompatActivity {
                     Log.d(TAG, "uri2File fail " + data.getData());
                 }
 
-//                Log.d(TAG, "onActivityResult - context: " + UploadActivity.this.toString());
-//                String videoPath = getPath(UploadActivity.this, videoUri);
-//                Log.d(TAG, "onActivityResult - videopath: " + videoPath);
-
                 new Thread(){
                     @Override
                     public void run(){
@@ -132,19 +140,23 @@ public class UploadActivity extends AppCompatActivity {
                         try{
                             /**
                              * 视频压缩
-                             * 第一个参数：视频源文件路径
+                             * 第一个参数：视频源文件路径 Uri
                              * 第二个参数：压缩后视频保存的路径
                              * Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) 是系统提供的公共目录
                              */
                             String systemPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
                             Log.d(TAG, "systemPath: "+ systemPath);
-//                            String compressPath = SiliCompressor.with(UploadActivity.this).compressVideo(videoPath, systemPath);
+                            mHandler.sendMessage(Message.obtain(mHandler, MSG_START_COMPRESS));
+
                             compressPath = SiliCompressor.with(UploadActivity.this).compressVideo(videoUri, systemPath);
                             Log.d(TAG, "compressPath: "+ compressPath);
+                            mHandler.sendMessage(Message.obtain(mHandler, MSG_END_COMPRESS));
 
                         } catch (URISyntaxException e) {
                             e.printStackTrace();
                         }
+                        System.out.println("压缩完毕");
+                        flag=true;
                     }
                 }.start();
 
@@ -153,6 +165,31 @@ public class UploadActivity extends AppCompatActivity {
             }
         }
     }
+
+    // TODO
+    //  根据压缩状况修改界面
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    Toast.makeText(UploadActivity.this, "正在压缩，请稍后", Toast.LENGTH_SHORT).show();
+                    findViewById(R.id.btn_submit).setEnabled(false);
+                    animationView.setVisibility(View.VISIBLE);
+                    animationView.getBackground().setAlpha(180);
+                    animationView.bringToFront();
+                    animationView.playAnimation();
+                    break;
+                case 1:
+                    Toast.makeText(UploadActivity.this, "压缩完毕", Toast.LENGTH_SHORT).show();
+                    findViewById(R.id.btn_submit).setEnabled(true);
+                    animationView.setVisibility(View.INVISIBLE);
+                    animationView.pauseAnimation();
+                    break;
+            }
+            return false;
+        }
+    });
 
     private void initNetwork() {
         //TODO 3
@@ -174,37 +211,25 @@ public class UploadActivity extends AppCompatActivity {
         startActivityForResult(intent, requestCode);
     }
 
-    // TODO
-    //  将 Uri 转换为 path
-    private String getPath(Context context, Uri uri) {
-        String path = null;
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-        if (cursor == null) {
-            return null;
-        }
-        if (cursor.moveToFirst()) {
-            try {
-                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        cursor.close();
-        return path;
-    }
-
     // TODO NEW
     //  提交时的注意事项
     private void submit() {
+
+        // TODO
+        //  获取图片信息
         byte[] coverImageData = readDataFromUri(coverImageUri);
-        // 将 path 转换为 Uri
+
+        // TODO
+        //  获取视频信息
+        //  将 path 转换为 Uri
+
         videoUri = Uri.parse("file://"+compressPath);
-        Log.d(TAG, "videoUriNew:" + videoUri.toString());
-//        File videoPath = new File("/storage/emulated/0/Android/data/com.bytedance.sjtu2021/files/Movies/20210504_151809.mp4");
-//        videoUri = Uri.fromFile(videoPath);
         Log.d(TAG, "submit - videoUri: " + videoUri);
         byte[] videoData = readDataFromUri(videoUri);
 
+
+        // TODO
+        //  关于封面和视频信息的判断
         if (coverImageData == null || coverImageData.length == 0) {
             Toast.makeText(this, "封面不存在", Toast.LENGTH_SHORT).show();
             return;

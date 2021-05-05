@@ -20,15 +20,32 @@
         android:text="选择封面"
         android:layout_gravity="center"
         />
-
-    <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/sd_video"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        app:actualImageScaleType="centerCrop"
-        app:placeholderImage="@drawable/bg_round_rect"
-        android:layout_margin="20dp"
-        />
+        android:layout_height="160dp">
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"
+            app:lottie_rawRes="@raw/material_wave_loading"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="false"
+            android:visibility="invisible"
+            android:background="@color/gray"
+            />
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/sd_video"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            app:actualImageScaleType="centerCrop"
+            app:placeholderImage="@drawable/bg_round_rect"
+            android:layout_margin="20dp"
+            >
+    </com.facebook.drawee.view.SimpleDraweeView>
+
+    </FrameLayout>
     <Button
         android:id="@+id/btn_video"
         android:layout_width="100dp"
