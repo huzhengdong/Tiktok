@@ -4,19 +4,23 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,8 +30,10 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,8 +54,16 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     private boolean isRecording = false;
     private int timeing = 0;
     public Handler handler = new Handler();
-    private String mp4Path = "";
+    public String mp4Path = "";
+    private String videoName;
     private ProgressBar progressBar;
+    private ImageButton btn_yes;
+    private ImageButton btn_no;
+    public File mediaFile;
+
+    private TextView btn_home;
+    private TextView btn_upload;
+    private TextView btn_mine;
 
     public static void startUI(Context context) {
         Intent intent = new Intent(context, CustomCameraActivity.class);
@@ -61,6 +75,7 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_camera);
+        setMenu();
         mSurfaceView = findViewById(R.id.surfaceview);
         mVideoView = findViewById(R.id.videoview);
         mRecordButton = findViewById(R.id.bt_record);
@@ -81,7 +96,10 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         progressBar = findViewById(R.id.progressbar);
         progressBar.setMax(1000);
         progressBar.setMin(0);
-
+        btn_yes = findViewById(R.id.btn_yes);
+        btn_no = findViewById(R.id.btn_no);
+        btn_no.setColorFilter(Color.WHITE);
+        btn_yes.setColorFilter(Color.WHITE);
     }
 
     Runnable runnable =new Runnable() {
@@ -127,12 +145,12 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
 
     private void initCamera() {
         mCamera = Camera.open();
-        Camera.Parameters parameters = mCamera.getParameters();
-        parameters.setPictureFormat(ImageFormat.JPEG);
-        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-        parameters.set("orientation", "portrait");
-        parameters.set("rotation", 90);
-        mCamera.setParameters(parameters);
+//        Camera.Parameters parameters = mCamera.getParameters();
+//        parameters.setPictureFormat(ImageFormat.JPEG);
+//        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+//        parameters.set("orientation", "portrait");
+//        parameters.set("rotation", 90);
+//        mCamera.setParameters(parameters);
         mCamera.setDisplayOrientation(90);
 
     }
@@ -182,13 +200,38 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     }
 
     private String getOutputMediaPath() {
-        File mediaStorageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile = new File(mediaStorageDir, "IMG_" + timeStamp + ".mp4");
+        File mediaStorageDir = getExternalFilesDir(Environment.DIRECTORY_MOVIES);
+        videoName = "VIDEO_"+System.currentTimeMillis() + ".mp4";
+        mediaFile = new File(mediaStorageDir, videoName);
         if (!mediaFile.exists()) {
             mediaFile.getParentFile().mkdirs();
         }
         return mediaFile.getAbsolutePath();
+    }
+
+    public void pressNo(View view){
+        mVideoView.setVisibility(View.INVISIBLE);
+        btn_yes.setVisibility(View.INVISIBLE);
+        btn_no.setVisibility(View.INVISIBLE);
+        mRecordButton.setVisibility(View.VISIBLE);
+    }
+    public void pressYes(View view){
+        try {
+            MediaStore.Images.Media.insertImage(this.getContentResolver(), mp4Path, videoName, null);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        // 最后通知图库更新
+        Intent intentupdate = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri videoUri = Uri.parse("file://" + mp4Path);
+        intentupdate.setData(videoUri);
+        this.sendBroadcast(intentupdate);
+        Intent intent = new Intent(CustomCameraActivity.this,UploadActivity.class);
+//        File newFile = new File(mp4Path);
+//        Uri uri = FileProvider.getUriForFile (CustomCameraActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider", mediaFile);
+//        Log.d(" video path:  " + mp4Path);
+        intent.putExtra ("VideoPath", mp4Path);
+        startActivity(intent);
     }
 
 
@@ -212,6 +255,9 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
             mCamera.lock();
 
             mVideoView.setVisibility(View.VISIBLE);
+            btn_yes.setVisibility(View.VISIBLE);
+            btn_no.setVisibility(View.VISIBLE);
+            mRecordButton.setVisibility(View.INVISIBLE);
 //            mImageView.setVisibility(View.GONE);
             mVideoView.setVideoPath(mp4Path);
             mVideoView.start();
@@ -274,5 +320,29 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     protected void onPause() {
         super.onPause();
         mCamera.stopPreview();
+    }
+    public void setMenu()
+    {
+        btn_home= findViewById(R.id.btn_home);
+        btn_upload = findViewById(R.id.btn_upload);
+        btn_mine = findViewById(R.id.btn_mine);
+        btn_home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(CustomCameraActivity.this,MainActivity.class));
+            }
+        });
+        btn_upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(CustomCameraActivity.this,UploadActivity.class));
+            }
+        });
+        btn_mine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(CustomCameraActivity.this,MineActivity.class));
+            }
+        });
     }
 }

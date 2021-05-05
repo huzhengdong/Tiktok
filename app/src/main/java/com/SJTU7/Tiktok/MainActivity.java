@@ -19,6 +19,8 @@ import com.SJTU7.Tiktok.VideoItem;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.SJTU7.Tiktok.VideoItemListResponse;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -42,17 +44,16 @@ import com.airbnb.lottie.LottieAnimationView;
 
 public class MainActivity extends AppCompatActivity {
     private FeedAdapter adapter = new FeedAdapter();
-    private List<VideoItem> VideoList;
-    private LottieAnimationView animationView;
-    private RecyclerView recyclerView;
     private HomeFragment homeFragment;
-    private CameraFragment cameraFragment;
-    private UploadFragment uploadFragment;
     private MineFragment mineFragment;
     private SharedPreferences spdata;
     private SharedPreferences.Editor editor;
     private String user_id;
+    private TextView btn_record;
+    private TextView btn_upload;
+    private TextView btn_mine;
 
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Fresco.initialize(this);
@@ -74,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
                 Constants.USER_NAME = spdata.getString("name","#");
             }
 
+        setMenu();
+
+
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         ViewPager pager = findViewById(R.id.view_pager);
         pager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -85,12 +89,6 @@ public class MainActivity extends AppCompatActivity {
                         homeFragment = new HomeFragment();
                         return homeFragment;
                     case 1:
-                        cameraFragment = new CameraFragment();
-                        return cameraFragment;
-                    case 2:
-                        uploadFragment = new UploadFragment();
-                        return uploadFragment;
-                    case 3:
                         mineFragment = new MineFragment();
                         return mineFragment;
                 }
@@ -99,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public int getCount() {
-                return 4;
+                return 2;
             }
 
             @Nullable
@@ -107,30 +105,39 @@ public class MainActivity extends AppCompatActivity {
             public CharSequence getPageTitle(int position) {
                 switch (position) {
                     case 0:
-                        return "首页";
+                        return "所有";
                     case 1:
-                        return "录制";
-                    case 2:
-                        return "上传";
-                    case 3:
                         return "我的";
                 }
                 return "首页";
             }
         });
         tabLayout.setupWithViewPager(pager);
+    }
+    public void setMenu()
+    {
+        btn_record = findViewById(R.id.btn_record);
+        btn_upload = findViewById(R.id.btn_upload);
+        btn_mine = findViewById(R.id.btn_mine);
+        btn_record.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,CustomCameraActivity.class));
+            }
+        });
+        btn_upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,UploadActivity.class));
+            }
+        });
+        btn_mine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,MineActivity.class));
+            }
+        });
+    }
 
-    }
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        //uploadFragment.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    protected void onStop() {//写在onDestroy会导致没有执行完程序已经结束了
-        super.onStop();
-        editor.putString("name",Constants.USER_NAME);
-        editor.apply();
-    }
 
 }

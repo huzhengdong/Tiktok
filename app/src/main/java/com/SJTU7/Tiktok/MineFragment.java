@@ -3,17 +3,13 @@ package com.SJTU7.Tiktok;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -34,7 +30,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import com.SJTU7.Tiktok.Constants;
 
 public class MineFragment extends Fragment
 {
@@ -42,16 +37,12 @@ public class MineFragment extends Fragment
     private List<VideoItem> VideoList;
     private LottieAnimationView animationView;
     private RecyclerView recyclerView;
-    private TextView textName;
-    private EditText editName;
-    private Button btn;
-    private TextView user_id;
-    private String name;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_mine, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
         //Fresco.initialize(getContext());
         animationView = view.findViewById(R.id.animation_view);
         recyclerView = view.findViewById(R.id.rv_list);
@@ -63,42 +54,6 @@ public class MineFragment extends Fragment
         LinearSnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
 
-        textName = view.findViewById(R.id.text_name);
-        textName.setText(Constants.USER_NAME);
-        editName = view.findViewById(R.id.edit_name);
-        editName.setText(Constants.USER_NAME);
-        user_id = view.findViewById(R.id.user_id);
-        user_id.setText(Constants.USER_ID);
-        btn = view.findViewById(R.id.btn);
-
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(btn.getText().equals("修改昵称"))
-                {
-                    textName.setVisibility(View.GONE);
-                    editName.setVisibility(View.VISIBLE);
-                    btn.setText("确认");
-                }
-                else {
-                    name = editName.getText().toString();
-                    if(name.length()>0)
-                    {
-                        textName.setText(name);
-                        textName.setVisibility(View.VISIBLE);
-                        editName.setVisibility(View.GONE);
-                        btn.setText("修改昵称");
-                        Constants.USER_NAME = name;
-                        InputMethodManager m = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        m.hideSoftInputFromWindow(editName.getWindowToken(), 0);
-                    }
-                    else {
-                        Toast.makeText(getContext(),"昵称禁止为空",Toast.LENGTH_SHORT).show();
-                        }
-
-                }
-            }
-        });
         return view;
     }
     @Override
@@ -128,10 +83,13 @@ public class MineFragment extends Fragment
             public void run() {
                 animationView.setVisibility(View.GONE);
                 animationView.pauseAnimation();
-                if(response[0].success)
+                if(response[0]!=null)
                 {
                     VideoList = response[0].feeds;
                     adapter.setData(VideoList);
+                }
+                else {
+                    Toast.makeText(getContext(),"网络错误",Toast.LENGTH_SHORT).show();
                 }
 
                 recyclerView.setVisibility(View.VISIBLE);
@@ -179,10 +137,6 @@ public class MineFragment extends Fragment
         }  catch (Exception e) {
             e.printStackTrace();
             //Toast.makeText(this, "网络异常" + e.toString(), Toast.LENGTH_SHORT).show();
-        }
-        if(result==null)
-        {
-            result = new VideoItemListResponse();
         }
         return result;
     }
