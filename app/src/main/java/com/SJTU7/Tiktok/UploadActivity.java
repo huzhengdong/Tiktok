@@ -192,7 +192,7 @@ public class UploadActivity extends AppCompatActivity {
                             Log.d(TAG, "systemPath: "+ systemPath);
                             mHandler.sendMessage(Message.obtain(mHandler, MSG_START_COMPRESS));
 
-                            compressPath = SiliCompressor.with(UploadActivity.this).compressVideo(videoUri.toString(), systemPath);
+                            compressPath = SiliCompressor.with(UploadActivity.this).compressVideo(videoUri,systemPath);
                             Log.d(TAG, "compressPath: "+ compressPath);
                             mHandler.sendMessage(Message.obtain(mHandler, MSG_END_COMPRESS));
 
