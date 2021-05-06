@@ -60,24 +60,40 @@ public class MainActivity extends AppCompatActivity {
         Fresco.initialize(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        spdata = getSharedPreferences("data",MODE_PRIVATE);
-        editor = spdata.edit();
-        user_id = spdata.getString("id","-1");
-        if(user_id.equals("-1"))
-        {
-            user_id = String.valueOf(Calendar.getInstance().getTimeInMillis());
-            Constants.USER_ID = user_id;
-            editor.putString("id",user_id);
-            editor.putString("name",Constants.USER_NAME);
-            editor.apply();
-        }
-        else {
-                Constants.USER_ID = user_id;
-                Constants.USER_NAME = spdata.getString("name","#");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                spdata = getSharedPreferences("data",MODE_PRIVATE);
+                editor = spdata.edit();
+//                editor.clear();
+//                editor.apply();
+                user_id = spdata.getString("id","-1");
+                if(user_id.equals("-1"))
+                {
+                    user_id = String.valueOf(Calendar.getInstance().getTimeInMillis());
+                    Constants.USER_ID = user_id;
+                    editor.putString("id",user_id);
+                    editor.putString("name",Constants.USER_NAME);
+                    editor.putInt("friend_amount",0);
+                    editor.apply();
+                }
+                else {
+                    Constants.USER_ID = user_id;
+                    Constants.USER_NAME = spdata.getString("name","#");
+                    int size = spdata.getInt("friend_amount",-1);
+                    for(int i = 0;i < size;i++)
+                    {
+                        String id = spdata.getString("friend"+i,"");
+                        if(!id.equals("")&&!Constants.friend_id.contains(id))
+                        {
+                            Constants.friend_id.add(id);
+                        }
+                    }
+                }
             }
+        }).start();
 
         setMenu();
-
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         ViewPager pager = findViewById(R.id.view_pager);

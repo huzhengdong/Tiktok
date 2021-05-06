@@ -53,7 +53,7 @@ public class FriendFragment extends Fragment
 
         LinearSnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-        Constants.friend_id.add("119082910012");
+        //Constants.friend_id.add("119082910012");
 
 
         return view;
