@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.SJTU7.Tiktok.VideoItemListResponse;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -36,6 +37,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -68,9 +71,18 @@ public class MainActivity extends AppCompatActivity {
 //                editor.clear();
 //                editor.apply();
                 user_id = spdata.getString("id","-1");
+
                 if(user_id.equals("-1"))
                 {
                     user_id = String.valueOf(Calendar.getInstance().getTimeInMillis());
+                    try {
+                        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+                        int rand = random.nextInt(999);
+                        String b = String.format("%03d",rand);
+                        user_id+=b;
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
                     Constants.USER_ID = user_id;
                     editor.putString("id",user_id);
                     editor.putString("name",Constants.USER_NAME);
@@ -92,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
-
         setMenu();
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
