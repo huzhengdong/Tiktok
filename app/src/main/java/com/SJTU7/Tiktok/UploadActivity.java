@@ -89,6 +89,32 @@ public class UploadActivity extends AppCompatActivity {
             coverImageUri = getVideoThumb(this,videoUri);
             coverSD.setImageURI(coverImageUri);
             videoSD.setImageURI(coverImageUri);
+            new Thread(){
+                @Override
+                public void run(){
+                    super.run();
+                    try{
+                        /**
+                         * 视频压缩
+                         * 第一个参数：视频源文件路径 Uri
+                         * 第二个参数：压缩后视频保存的路径
+                         * Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) 是系统提供的公共目录
+                         */
+                        String systemPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+                        Log.d(TAG, "systemPath: "+ systemPath);
+                        mHandler.sendMessage(Message.obtain(mHandler, MSG_START_COMPRESS));
+
+                        compressPath = SiliCompressor.with(UploadActivity.this).compressVideo(videoUri,systemPath);
+                        Log.d(TAG, "compressPath: "+ compressPath);
+                        mHandler.sendMessage(Message.obtain(mHandler, MSG_END_COMPRESS));
+
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("压缩完毕");
+                    flag=true;
+                }
+            }.start();
         }
 
         findViewById(R.id.btn_cover).setOnClickListener(new View.OnClickListener() {

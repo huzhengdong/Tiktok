@@ -9,6 +9,7 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -216,20 +217,19 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         mRecordButton.setVisibility(View.VISIBLE);
     }
     public void pressYes(View view){
-        try {
-            MediaStore.Images.Media.insertImage(this.getContentResolver(), mp4Path, videoName, null);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        // 最后通知图库更新
-        Intent intentupdate = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        Uri videoUri = Uri.parse("file://" + mp4Path);
-        intentupdate.setData(videoUri);
-        this.sendBroadcast(intentupdate);
+//        try {
+//            MediaStore.Images.Media.insertImage(this.getContentResolver(), mp4Path, videoName, null);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//        // 最后通知图库更新
+//        Intent intentupdate = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//        Uri videoUri = Uri.parse("file://" + mp4Path);
+//        intentupdate.setData(videoUri);
+//        this.sendBroadcast(intentupdate);
+//        MediaScannerConnection.scanFile(this, new String[] { mp4Path }, null, null);
         Intent intent = new Intent(CustomCameraActivity.this,UploadActivity.class);
-//        File newFile = new File(mp4Path);
-//        Uri uri = FileProvider.getUriForFile (CustomCameraActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider", mediaFile);
-//        Log.d(" video path:  " + mp4Path);
         intent.putExtra ("VideoPath", mp4Path);
         startActivity(intent);
     }
