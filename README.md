@@ -1,15 +1,17 @@
 # Tiktok
 
 ## 主要改动
-- 将Activity改为Fragment
-- ”我的“增加用户id和昵称的显示，可修改昵称
-- 初次使用时根据时间戳生成id，id和name都用SharedPreferences保存
-- recycleView一次滑动一页 不会停在中间
+- MainActivity有三个Fragment 布局完全相同，分别为
+   - HomeFragment 展示所有人的视频信息
+   - FriendFragment 展示用户关注的人的视频信息
+   - MineFragment 展示用户自己发布的视频信息   
+- 其他三个重新改为Activity 暂时设置为单例模式
+- 在根据时间戳生成id后，使用SecurityRandom在末尾加上三位随机数，减小id重复的概率
+- MineActivity增加了关注功能，输入用户id即可添加关注，使用SharedPreference保存
 
 
 ## 待改进
-- Camera的pressYes函数涉及到Fragment的转换 还没有实现
-- 手动切换每个Fragment的时候状态有点问题
-- 两个人完全同时使用时会导致id一样
-- recycleview点击某些item会特别卡
+- 我自己这的Camera的pressYes会崩溃，很奇怪
+- 点某些item时进度条离奇消失（同样的代码，虚拟机有手机上没有）
+- 所有的UI
 
