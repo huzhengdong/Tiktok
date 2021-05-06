@@ -31,7 +31,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class HomeFragment extends Fragment
+public class FriendFragment extends Fragment
 {
     private FeedAdapter adapter = new FeedAdapter();
     private List<VideoItem> VideoList;
@@ -53,22 +53,24 @@ public class HomeFragment extends Fragment
 
         LinearSnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
+        Constants.friend_id.add("119082910012");
+
 
         return view;
     }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getData(null);
+        getData(Constants.friend_id);
     }
 
-    private void getData(String studentId){
+    private void getData(List<String> friend_id){
         final VideoItemListResponse[] response = new VideoItemListResponse[1];
         new Thread(new Runnable() {
             @Override
             public void run() {
                 response[0] =  baseGetMessageFromRemote(
-                        studentId, "application/json");
+                        null, "application/json");
             }
         }).start();
         //UI必须在主线程更新 而请求时间可能略长，大于setData的时间，导致更新UI完成时data并没有更新
@@ -88,15 +90,16 @@ public class HomeFragment extends Fragment
                     VideoList = response[0].feeds;
                     for(int i = VideoList.size() - 1; i >= 0; i--){
                         VideoItem item = VideoList.get(i);
-                        if(!Constants.all_id.contains(item.getStudentId())){
-                            Constants.all_id.add(item.getStudentId());//在每次请求时同时记录所有用户id信息 以便加好友时查找
+                        if(!friend_id.contains(item.getStudentId())){
+                            VideoList.remove(item);
                         }
                     }
                     adapter.setData(VideoList);
                 }
+
                 else {
                     Toast.makeText(getContext(),"网络错误",Toast.LENGTH_SHORT).show();
-                    }
+                }
 
                 recyclerView.setVisibility(View.VISIBLE);
             }

@@ -45,6 +45,7 @@ import com.airbnb.lottie.LottieAnimationView;
 public class MainActivity extends AppCompatActivity {
     private FeedAdapter adapter = new FeedAdapter();
     private HomeFragment homeFragment;
+    private FriendFragment friendFragment;
     private MineFragment mineFragment;
     private SharedPreferences spdata;
     private SharedPreferences.Editor editor;
@@ -89,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
                         homeFragment = new HomeFragment();
                         return homeFragment;
                     case 1:
+                        friendFragment = new FriendFragment();
+                        return friendFragment;
+                    case 2:
                         mineFragment = new MineFragment();
                         return mineFragment;
                 }
@@ -97,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public int getCount() {
-                return 2;
+                return 3;
             }
 
             @Nullable
@@ -107,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
                     case 0:
                         return "所有";
                     case 1:
+                        return "关注";
+                    case 2:
                         return "我的";
                 }
                 return "首页";

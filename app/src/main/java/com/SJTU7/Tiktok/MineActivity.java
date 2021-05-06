@@ -1,7 +1,9 @@
 package com.SJTU7.Tiktok;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +29,11 @@ public class MineActivity extends AppCompatActivity {
     private SharedPreferences spdata;
     private SharedPreferences.Editor editor;
 
+    private RecyclerView recyclerView;
+    private FriendAdapter adapter = new FriendAdapter();
+    private EditText et_add;
+    private Button btn_add;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +47,39 @@ public class MineActivity extends AppCompatActivity {
         user_id = findViewById(R.id.user_id);
         user_id.setText(Constants.USER_ID);
         btn = findViewById(R.id.btn);
+        recyclerView = findViewById(R.id.friend_list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(MineActivity.this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter.setData(Constants.friend_id);
+        recyclerView.setAdapter(adapter);
 
+        et_add= findViewById(R.id.et_add);
+        btn_add = findViewById(R.id.btn_add);
+        btn_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String add = et_add.getText().toString();
+                //Toast.makeText(MineActivity.this,String.valueOf(Constants.all_id.size()),Toast.LENGTH_SHORT).show();
+                if(Constants.friend_id.contains(add)){
+                    Toast.makeText(MineActivity.this,"该用户已被关注",Toast.LENGTH_SHORT).show();
+                    return ;
+                }
+                if(Constants.USER_ID.equals(add))
+                {
+                    Toast.makeText(MineActivity.this,"不能关注自己",Toast.LENGTH_SHORT).show();
+                    return ;
+                }
+                if(Constants.all_id.contains(add))
+                {
+                    Constants.friend_id.add(add);
+                    adapter.setData(Constants.friend_id);
+                    et_add.setText("");
+                    return ;
+                }
+                return;
+            }
+        });
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

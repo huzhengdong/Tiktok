@@ -14,7 +14,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
-public class FeedAdapter extends RecyclerView.Adapter<com.SJTU7.Tiktok.FeedAdapter.VideoViewHolder>{
+public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.VideoViewHolder>{
 
     private List<VideoItem> videoItemList;
     public void setData(List<VideoItem> videoList){
@@ -75,6 +75,5 @@ public class FeedAdapter extends RecyclerView.Adapter<com.SJTU7.Tiktok.FeedAdapt
     public int getItemCount() {
         return videoItemList==null?0:videoItemList.size();
     }
-
 
 }
