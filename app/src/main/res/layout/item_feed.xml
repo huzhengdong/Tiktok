@@ -21,9 +21,9 @@
         android:layout_height="wrap_content"
         android:textSize="15sp"
         android:textColor="#ffffff"
-        android:layout_alignBottom="@id/sd_cover"
         android:layout_marginLeft="10dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="10dp"
+        android:layout_above="@id/tv_content"
         android:maxLines="1"
         tools:text="FROM: WRR"
         />
@@ -35,8 +35,8 @@
         android:layout_marginStart="10dp"
         android:textSize="15sp"
         android:textColor="#ffffff"
-        android:layout_alignBottom="@id/sd_cover"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="10dp"
+        android:layout_above="@id/tv_to"
         tools:text="TO: ALL"
         />
 
@@ -48,7 +48,7 @@
         android:textColor="#ffffff"
         android:layout_alignBottom="@id/sd_cover"
         android:layout_marginStart="10dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="40dp"
         android:maxLines="3"
         android:ellipsize="end"
         tools:text="这是内容。。。。。。"
