@@ -4,30 +4,29 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
+
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.os.Build;
-import android.os.Bundle;
+
 import android.os.Handler;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import android.util.Log;
+
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
+
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -42,7 +41,6 @@ public class videoPlay extends AppCompatActivity {
     private Runnable runnable;
     private TextView textViewTime;
     private TextView textViewCurrentPosition;
-    private String videoUrl;
     private ImageButton play_stop;
     static boolean isPlay = true;
     private RelativeLayout Parent_relative;

@@ -327,11 +327,11 @@ public class UploadActivity extends AppCompatActivity {
 
     private void submit() {
 
-        // TODO
+
         //  获取图片信息
         byte[] coverImageData = readDataFromUri(coverImageUri);
 
-        // TODO
+
         //  获取视频信息
         byte[] videoData = readDataFromUri(videoUri);
 
@@ -340,7 +340,7 @@ public class UploadActivity extends AppCompatActivity {
         lottieAnimationView.setVisibility(View.VISIBLE);
         lottieAnimationView.playAnimation();
 
-        // TODO
+
         //  关于封面和视频信息的判断
         if (coverImageData == null || coverImageData.length == 0) {
             Toast.makeText(this, "封面不存在", Toast.LENGTH_SHORT).show();
@@ -366,11 +366,11 @@ public class UploadActivity extends AppCompatActivity {
             submit_recover();
             return;
         }
-        //TODO 5
+
         // 使用api.submitMessage()方法提交留言
         // 如果提交成功则关闭activity，否则弹出toast
 
-        // TODO NEW
+
         //  更改 Body 中的内容，来自前端界面
         MultipartBody.Part image_part = MultipartBody.Part.createFormData(
                 "cover_image",
@@ -382,7 +382,7 @@ public class UploadActivity extends AppCompatActivity {
                 "video_file.mp4",
                 RequestBody.create(MediaType.parse("multipart/form_data"), videoData)
         );
-        // TODO NEW
+
         //  更改 Call 的组成，应该和 submit 所需的网址要求相符合
         new Thread(new Runnable() {
             @Override
