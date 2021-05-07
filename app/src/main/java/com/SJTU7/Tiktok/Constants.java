@@ -10,4 +10,6 @@ public class Constants {
     public static String USER_NAME = "hzd";
     public static List<String> friend_id = new ArrayList<>();
     public static List<String> all_id = new ArrayList<>();
+    public static boolean upload = false;
+    public static String mp4Path = "";
 }

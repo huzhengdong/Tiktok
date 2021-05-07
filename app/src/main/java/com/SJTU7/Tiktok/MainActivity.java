@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.SJTU7.Tiktok.VideoItemListResponse;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -36,6 +37,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -60,24 +63,48 @@ public class MainActivity extends AppCompatActivity {
         Fresco.initialize(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        spdata = getSharedPreferences("data",MODE_PRIVATE);
-        editor = spdata.edit();
-        user_id = spdata.getString("id","-1");
-        if(user_id.equals("-1"))
-        {
-            user_id = String.valueOf(Calendar.getInstance().getTimeInMillis());
-            Constants.USER_ID = user_id;
-            editor.putString("id",user_id);
-            editor.putString("name",Constants.USER_NAME);
-            editor.apply();
-        }
-        else {
-                Constants.USER_ID = user_id;
-                Constants.USER_NAME = spdata.getString("name","#");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                spdata = getSharedPreferences("data",MODE_PRIVATE);
+                editor = spdata.edit();
+//                editor.clear();
+//                editor.apply();
+                user_id = spdata.getString("id","-1");
+
+                if(user_id.equals("-1"))
+                {
+                    user_id = String.valueOf(Calendar.getInstance().getTimeInMillis());
+                    try {
+                        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+                        int rand = random.nextInt(999);
+                        String b = String.format("%03d",rand);
+                        user_id+=b;
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
+                    Constants.USER_ID = user_id;
+                    editor.putString("id",user_id);
+                    editor.putString("name",Constants.USER_NAME);
+                    editor.putInt("friend_amount",0);
+                    editor.apply();
+                }
+                else {
+                    Constants.USER_ID = user_id;
+                    Constants.USER_NAME = spdata.getString("name","#");
+                    int size = spdata.getInt("friend_amount",-1);
+                    for(int i = 0;i < size;i++)
+                    {
+                        String id = spdata.getString("friend"+i,"");
+                        if(!id.equals("")&&!Constants.friend_id.contains(id))
+                        {
+                            Constants.friend_id.add(id);
+                        }
+                    }
+                }
             }
-
+        }).start();
         setMenu();
-
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         ViewPager pager = findViewById(R.id.view_pager);

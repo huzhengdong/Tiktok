@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -34,11 +35,14 @@ public class MineActivity extends AppCompatActivity {
     private EditText et_add;
     private Button btn_add;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mine);
 
+        spdata = getSharedPreferences("data",MODE_PRIVATE);
+        editor = spdata.edit();
         setMenu();
         textName = findViewById(R.id.text_name);
         textName.setText(Constants.USER_NAME);
@@ -110,12 +114,16 @@ public class MineActivity extends AppCompatActivity {
         });
 
     }
+
     @Override
-    protected void onStop() {//写在onDestroy会导致没有执行完程序已经结束了
-        super.onStop();
-        spdata = getSharedPreferences("data",MODE_PRIVATE);
-        editor = spdata.edit();
+    protected void onPause() {//写在onDestroy会导致没有执行完程序已经结束了 onStop也不行 可能是单例模式的问题
+        super.onPause();
         editor.putString("name",Constants.USER_NAME);
+        editor.putInt("friend_amount",Constants.friend_id.size());
+        for(int i = 0;i < Constants.friend_id.size();i++)
+        {
+            editor.putString("friend"+i,Constants.friend_id.get(i));
+        }
         editor.apply();
     }
 
@@ -130,7 +138,7 @@ public class MineActivity extends AppCompatActivity {
                 startActivity(new Intent(MineActivity.this,MainActivity.class));
             }
         });
-        btn_upload.setOnClickListener(new View.OnClickListener() {
+        btn_record.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MineActivity.this,CustomCameraActivity.class));

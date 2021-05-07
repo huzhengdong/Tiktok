@@ -13,12 +13,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ID:"
+            android:textSize="20dp"
             android:paddingHorizontal="20dp"/>
         <TextView
             android:id="@+id/friend_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="123456789"/>
+            android:text="123456789"
+            android:textSize="20dp"/>
 
     </LinearLayout>
     <Button
