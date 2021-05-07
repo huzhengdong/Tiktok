@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
@@ -64,7 +65,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.VideoViewHolde
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         VideoItem videoItem = videoItemList.get(position);
-        holder.coverSD.setImageURI(videoItem.getImageUrl());
+        //holder.coverSD.setImageURI(videoItem.getImageUrl());
+        Glide.with(holder.videoView.getContext())
+                .load(videoItem.getImageUrl())
+                .into(holder.coverSD);
         holder.fromTV.setText("@"+videoItem.getUserName());
         holder.contentTV.setText(videoItem.getContent());
         holder.toTV.setText("Published at: "+videoItem.getCreatedAt());
