@@ -60,6 +60,7 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     private TextView btn_home;
     private TextView btn_upload;
     private TextView btn_mine;
+    private TextView btn_record;
 
     public static void startUI(Context context) {
         Intent intent = new Intent(context, CustomCameraActivity.class);
@@ -321,9 +322,11 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     }
     public void setMenu()
     {
-        btn_home= findViewById(R.id.btn_home);
+        btn_home = findViewById(R.id.btn_home);
+        btn_record = findViewById(R.id.btn_record);
         btn_upload = findViewById(R.id.btn_upload);
         btn_mine = findViewById(R.id.btn_mine);
+        btn_record.setTextColor(Color.WHITE);
         btn_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

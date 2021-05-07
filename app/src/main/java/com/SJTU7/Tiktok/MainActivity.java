@@ -10,6 +10,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences spdata;
     private SharedPreferences.Editor editor;
     private String user_id;
+    private TextView btn_home;
     private TextView btn_record;
     private TextView btn_upload;
     private TextView btn_mine;
@@ -128,11 +130,14 @@ public class MainActivity extends AppCompatActivity {
         });
         tabLayout.setupWithViewPager(pager);
     }
+    @SuppressLint("ResourceAsColor")
     public void setMenu()
     {
+        btn_home = findViewById(R.id.btn_home);
         btn_record = findViewById(R.id.btn_record);
         btn_upload = findViewById(R.id.btn_upload);
         btn_mine = findViewById(R.id.btn_mine);
+        btn_home.setTextColor(Color.WHITE);
         btn_record.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

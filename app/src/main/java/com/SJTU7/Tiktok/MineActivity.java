@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import android.view.View;
@@ -26,6 +27,7 @@ public class MineActivity extends AppCompatActivity {
     private TextView btn_record;
     private TextView btn_upload;
     private TextView btn_home;
+    private TextView btn_mine;
 
     private SharedPreferences spdata;
     private SharedPreferences.Editor editor;
@@ -34,6 +36,7 @@ public class MineActivity extends AppCompatActivity {
     private FriendAdapter adapter = new FriendAdapter();
     private EditText et_add;
     private Button btn_add;
+
 
 
     @Override
@@ -137,6 +140,8 @@ public class MineActivity extends AppCompatActivity {
         btn_home = findViewById(R.id.btn_home);
         btn_record = findViewById(R.id.btn_record);
         btn_upload = findViewById(R.id.btn_upload);
+        btn_mine = findViewById(R.id.btn_mine);
+        btn_mine.setTextColor(Color.WHITE);
         btn_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
