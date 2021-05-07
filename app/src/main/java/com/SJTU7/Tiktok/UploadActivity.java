@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -221,20 +222,27 @@ public class UploadActivity extends AppCompatActivity {
             @Override
             public void run(){
                 super.run();
+                try {
                 String systemPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
                 Log.d(TAG, "systemPath: "+ systemPath);
                 mHandler.sendMessage(Message.obtain(mHandler, MSG_START_COMPRESS));
 
-                try {
-                    compressPath = SiliCompressor.with(UploadActivity.this).compressVideo(videoUri,systemPath);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                }
+                compressPath = SiliCompressor.with(UploadActivity.this).compressVideo(videoUri,systemPath);
                 Log.d(TAG, "compressPath: "+ compressPath);
                 mHandler.sendMessage(Message.obtain(mHandler, MSG_END_COMPRESS));
 
-                System.out.println("压缩完毕");
+                Looper.prepare();
+                Toast.makeText(UploadActivity.this,"压缩完毕",Toast.LENGTH_SHORT).show();
+                Looper.loop();
+
                 flag=true;
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(UploadActivity.this,"压缩失败",Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+
+            }
             }
         }.start();
     }
