@@ -1,6 +1,7 @@
 package com.SJTU7.Tiktok;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -216,16 +217,17 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         mRecordButton.setVisibility(View.VISIBLE);
     }
     public void pressYes(View view){
-        try {
-            MediaStore.Images.Media.insertImage(this.getContentResolver(), mp4Path, videoName, null);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        // 最后通知图库更新
-        Intent intentupdate = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        Uri videoUri = Uri.parse("file://" + mp4Path);
-        intentupdate.setData(videoUri);
-        this.sendBroadcast(intentupdate);
+//        try {
+//
+//            MediaStore.Images.Media.insertImage(this.getContentResolver(), mp4Path, videoName, null);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+         //最后通知图库更新
+//        Intent intentupdate = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//        Uri videoUri = Uri.parse("file://" + mp4Path);
+//        intentupdate.setData(videoUri);
+//        this.sendBroadcast(intentupdate);
         Intent intent = new Intent(CustomCameraActivity.this,UploadActivity.class);
 //        File newFile = new File(mp4Path);
 //        Uri uri = FileProvider.getUriForFile (CustomCameraActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider", mediaFile);

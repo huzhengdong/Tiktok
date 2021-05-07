@@ -26,10 +26,8 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
     public static class FriendViewHolder extends RecyclerView.ViewHolder{
         private TextView friend_id;
         private Button del;
-        private View friendView;
         public FriendViewHolder(@NonNull View itemView) {
             super(itemView);
-            friendView = itemView;
             friend_id = itemView.findViewById(R.id.friend_id);
             del = itemView.findViewById(R.id.delete);
         }
