@@ -7,4 +7,5 @@
     <color name="colorWhite">#aaaaaa</color>
     <color name="colorPurple">#800080</color>
     <color name="gray">#808080</color>
+    <color name="pureWhite">#ffffff</color>
 </resources>
