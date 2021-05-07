@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -37,7 +38,7 @@ public class FriendFragment extends Fragment
     private List<VideoItem> VideoList;
     private LottieAnimationView animationView;
     private RecyclerView recyclerView;
-
+    private Button btn_refresh;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,17 +55,24 @@ public class FriendFragment extends Fragment
         LinearSnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
         //Constants.friend_id.add("119082910012");
-
+        btn_refresh = view.findViewById(R.id.btn_refresh);
+        btn_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getData();
+            }
+        });
 
         return view;
     }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getData(Constants.friend_id);
+        getData();
     }
 
-    private void getData(List<String> friend_id){
+    private void getData(){
+
         final VideoItemListResponse[] response = new VideoItemListResponse[1];
         new Thread(new Runnable() {
             @Override
@@ -90,7 +98,7 @@ public class FriendFragment extends Fragment
                     VideoList = response[0].feeds;
                     for(int i = VideoList.size() - 1; i >= 0; i--){
                         VideoItem item = VideoList.get(i);
-                        if(!friend_id.contains(item.getStudentId())){
+                        if(!Constants.friend_id.contains(item.getStudentId())){
                             VideoList.remove(item);
                         }
                     }

@@ -82,17 +82,6 @@ public class UploadActivity extends AppCompatActivity {
 
         extraContentEditText = findViewById(R.id.et_extra_content);
 
-        if (getIntent().getStringExtra("VideoPath") != null) {
-            String videoPath = getIntent().getStringExtra("VideoPath");
-            Log.d(TAG, "received video path:  " + videoPath);
-            videoUri = Uri.parse("file://" + videoPath);
-            Log.d(TAG, "received video uri:  " + videoUri);
-            coverImageUri = getVideoThumb(this,videoUri);
-            coverSD.setImageURI(coverImageUri);
-            videoSD.setImageURI(coverImageUri);
-            compress();
-        }
-
         findViewById(R.id.btn_cover).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,6 +102,28 @@ public class UploadActivity extends AppCompatActivity {
                 submit();
             }
         });
+        solveInfoFromCamera();
+    }
+
+    private void solveInfoFromCamera()
+    {
+        if (Constants.upload) {
+            String videoPath = Constants.mp4Path;
+            Log.d(TAG, "received video path:  " + videoPath);
+            videoUri = Uri.parse("file://" + videoPath);
+            Log.d(TAG, "received video uri:  " + videoUri);
+            coverImageUri = getVideoThumb(this,videoUri);
+            coverSD.setImageURI(coverImageUri);
+            videoSD.setImageURI(coverImageUri);
+            compress();
+            Constants.upload = false;
+            Constants.mp4Path = "";
+        }
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        solveInfoFromCamera();
     }
 
     private Uri getVideoThumb(Context context, Uri uri) {
@@ -172,7 +183,7 @@ public class UploadActivity extends AppCompatActivity {
         if (REQUEST_CODE_VIDEO == requestCode) {
             if (resultCode == Activity.RESULT_OK) {
                 videoUri = data.getData();
-                videoSD.setImageURI(videoUri);
+                videoSD.setImageURI(getVideoThumb(this,videoUri));
 
                 if (videoUri != null) {
                     Log.d(TAG, "pick video " + videoUri.toString());
@@ -337,6 +348,7 @@ public class UploadActivity extends AppCompatActivity {
                                 Log.d("upload", "run: back");
                                 Intent intent = new Intent(UploadActivity.this, MainActivity.class);
                                 startActivity(intent);
+                                finish();
                             }
                         });
                     }

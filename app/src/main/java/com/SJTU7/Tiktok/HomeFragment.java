@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -37,7 +38,7 @@ public class HomeFragment extends Fragment
     private List<VideoItem> VideoList;
     private LottieAnimationView animationView;
     private RecyclerView recyclerView;
-
+    private Button btn_refresh;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,22 +54,29 @@ public class HomeFragment extends Fragment
 
         LinearSnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
+        btn_refresh = view.findViewById(R.id.btn_refresh);
+        btn_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getData();
+            }
+        });
 
         return view;
     }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getData(null);
+        getData();
     }
 
-    private void getData(String studentId){
+    private void getData(){
         final VideoItemListResponse[] response = new VideoItemListResponse[1];
         new Thread(new Runnable() {
             @Override
             public void run() {
                 response[0] =  baseGetMessageFromRemote(
-                        studentId, "application/json");
+                        null, "application/json");
             }
         }).start();
         //UI必须在主线程更新 而请求时间可能略长，大于setData的时间，导致更新UI完成时data并没有更新

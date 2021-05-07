@@ -35,6 +35,7 @@ public class MineActivity extends AppCompatActivity {
     private EditText et_add;
     private Button btn_add;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

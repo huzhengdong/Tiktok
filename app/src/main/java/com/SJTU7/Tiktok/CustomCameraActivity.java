@@ -232,8 +232,11 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
 //        File newFile = new File(mp4Path);
 //        Uri uri = FileProvider.getUriForFile (CustomCameraActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider", mediaFile);
 //        Log.d(" video path:  " + mp4Path);
-        intent.putExtra ("VideoPath", mp4Path);
+        //intent.putExtra ("VideoPath", mp4Path);
+        Constants.upload = true;
+        Constants.mp4Path = mp4Path;
         startActivity(intent);
+        finish();
     }
 
 
