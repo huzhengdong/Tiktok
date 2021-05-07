@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,6 +77,8 @@ public class UploadActivity extends AppCompatActivity {
     private TextView btn_home;
     private TextView btn_record;
     private TextView btn_mine;
+    private Button btn_submit;
+    private Button btn_compress;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,6 +89,8 @@ public class UploadActivity extends AppCompatActivity {
         coverSD = findViewById(R.id.sd_cover);
         videoSD = findViewById(R.id.sd_video);
         animationView = findViewById(R.id.animation_view);
+        btn_submit = findViewById(R.id.btn_submit);
+        btn_compress = findViewById(R.id.btn_compress);
 
         extraContentEditText = findViewById(R.id.et_extra_content);
 
@@ -100,6 +105,14 @@ public class UploadActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 getFile(REQUEST_CODE_VIDEO, VIDEO_TYPE, "选择视频");
+            }
+        });
+
+        findViewById(R.id.btn_compress).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btn_compress.setEnabled(false);
+                compress();
             }
         });
 
@@ -141,7 +154,6 @@ public class UploadActivity extends AppCompatActivity {
             coverImageUri = getVideoThumb(this,videoUri);
             coverSD.setImageURI(coverImageUri);
             videoSD.setImageURI(coverImageUri);
-            compress();
             Constants.upload = false;
             Constants.mp4Path = "";
         }
@@ -216,7 +228,6 @@ public class UploadActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "uri2File fail " + data.getData());
                 }
-                compress();
             } else {
                 Log.d(TAG, "file pick fail");
             }
@@ -260,27 +271,32 @@ public class UploadActivity extends AppCompatActivity {
             public void run(){
                 super.run();
                 try {
-                //String systemPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
-                String systemPath = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
-                Log.d(TAG, "systemPath: "+ systemPath);
-                mHandler.sendMessage(Message.obtain(mHandler, MSG_START_COMPRESS));
+                    //String systemPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+                    String systemPath = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
+                    Log.d(TAG, "systemPath: "+ systemPath);
+                    mHandler.sendMessage(Message.obtain(mHandler, MSG_START_COMPRESS));
 
-                compressPath = SiliCompressor.with(UploadActivity.this).compressVideo(videoUri,systemPath);
-                Log.d(TAG, "compressPath: "+ compressPath);
-                mHandler.sendMessage(Message.obtain(mHandler, MSG_END_COMPRESS));
+                    compressPath = SiliCompressor.with(UploadActivity.this).compressVideo(videoUri,systemPath);
+                    Log.d(TAG, "compressPath: "+ compressPath);
+                    mHandler.sendMessage(Message.obtain(mHandler, MSG_END_COMPRESS));
 
-                Looper.prepare();
-                Toast.makeText(UploadActivity.this,"压缩完毕",Toast.LENGTH_SHORT).show();
-                Looper.loop();
+                    Looper.prepare();
+                    Toast.makeText(UploadActivity.this,"压缩完毕",Toast.LENGTH_SHORT).show();
+                    Looper.loop();
 
-                flag=true;
+                    flag=true;
+                    //  将 path 转换为 Uri
+                    videoUri = Uri.parse("file://"+compressPath);
+                    Log.d(TAG, "submit - videoUri: " + videoUri);
+                    btn_compress.setText("压缩完毕");
+
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                     Looper.prepare();
                     Toast.makeText(UploadActivity.this,"压缩失败",Toast.LENGTH_SHORT).show();
                     Looper.loop();
 
-            }
+                }
             }
         }.start();
     }
@@ -302,6 +318,11 @@ public class UploadActivity extends AppCompatActivity {
         startActivityForResult(intent, requestCode);
     }
 
+    private void submit_recover(){
+        btn_submit.setText("提交");
+        findViewById(R.id.btn_submit).setEnabled(true);
+    }
+
     private void submit() {
 
         // TODO
@@ -310,33 +331,36 @@ public class UploadActivity extends AppCompatActivity {
 
         // TODO
         //  获取视频信息
-        //  将 path 转换为 Uri
-
-        videoUri = Uri.parse("file://"+compressPath);
-        Log.d(TAG, "submit - videoUri: " + videoUri);
         byte[] videoData = readDataFromUri(videoUri);
+
+        btn_submit.setText("正在上传");
+        findViewById(R.id.btn_submit).setEnabled(false);
 
 
         // TODO
         //  关于封面和视频信息的判断
         if (coverImageData == null || coverImageData.length == 0) {
             Toast.makeText(this, "封面不存在", Toast.LENGTH_SHORT).show();
+            submit_recover();
             return;
         }
 
         if (videoData == null || videoData.length == 0) {
             Toast.makeText(this, "视频为空", Toast.LENGTH_SHORT).show();
+            submit_recover();
             return;
         }
 
         String content = extraContentEditText.getText().toString();
         if (TextUtils.isEmpty(content)) {
             Toast.makeText(this, "请输入视频备注", Toast.LENGTH_SHORT).show();
+            submit_recover();
             return;
         }
 
         if ( coverImageData.length + videoData.length >= MAX_FILE_SIZE) {
             Toast.makeText(this, "文件过大", Toast.LENGTH_SHORT).show();
+            submit_recover();
             return;
         }
         //TODO 5
@@ -424,3 +448,4 @@ public class UploadActivity extends AppCompatActivity {
         });
     }
 }
+
