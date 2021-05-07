@@ -79,6 +79,7 @@ public class UploadActivity extends AppCompatActivity {
     private TextView btn_mine;
     private Button btn_submit;
     private Button btn_compress;
+    private LottieAnimationView lottieAnimationView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,6 +92,7 @@ public class UploadActivity extends AppCompatActivity {
         animationView = findViewById(R.id.animation_view);
         btn_submit = findViewById(R.id.btn_submit);
         btn_compress = findViewById(R.id.btn_compress);
+        lottieAnimationView = findViewById(R.id.lottie_view);
 
         extraContentEditText = findViewById(R.id.et_extra_content);
 
@@ -192,11 +194,11 @@ public class UploadActivity extends AppCompatActivity {
         }
         // 最后通知图库更新
         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        coverImageUri = Uri.fromFile(coverFile);
-        Log.d(TAG, "cover uri:  " + coverImageUri);
-        intent.setData(coverImageUri);
+        Uri coverUri = Uri.fromFile(coverFile);
+        Log.d(TAG, "cover uri:  " + coverUri);
+        intent.setData(coverUri);
         context.sendBroadcast(intent);
-        return coverImageUri;
+        return coverUri;
     }
 
     @Override
@@ -335,7 +337,8 @@ public class UploadActivity extends AppCompatActivity {
 
         btn_submit.setText("正在上传");
         findViewById(R.id.btn_submit).setEnabled(false);
-
+        lottieAnimationView.setVisibility(View.VISIBLE);
+        lottieAnimationView.playAnimation();
 
         // TODO
         //  关于封面和视频信息的判断
