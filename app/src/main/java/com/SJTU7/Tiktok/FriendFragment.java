@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -38,7 +39,7 @@ public class FriendFragment extends Fragment
     private List<VideoItem> VideoList;
     private LottieAnimationView animationView;
     private RecyclerView recyclerView;
-    private Button btn_refresh;
+    private SwipeRefreshLayout mSwip;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,15 +55,16 @@ public class FriendFragment extends Fragment
 
         LinearSnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-        //Constants.friend_id.add("119082910012");
-        btn_refresh = view.findViewById(R.id.btn_refresh);
-        btn_refresh.setOnClickListener(new View.OnClickListener() {
+        mSwip = (SwipeRefreshLayout) view.findViewById(R.id.swip);
+        mSwip.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onClick(View v) {
+            public void onRefresh() {
                 getData();
-                recyclerView.scrollToPosition(0);
+                mSwip.setRefreshing(false);
             }
         });
+
+        //Constants.friend_id.add("119082910012");
 
         return view;
     }
