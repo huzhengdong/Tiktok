@@ -121,7 +121,7 @@ public class videoPlay extends AppCompatActivity {
             holder = surfaceView.getHolder();
             holder.setFormat(PixelFormat.TRANSPARENT);
             holder.addCallback(new PlayerCallBack());
-            player.prepare();
+            player.prepareAsync();
             player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {

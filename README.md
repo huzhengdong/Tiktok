@@ -1,17 +1,17 @@
 # Tiktok
 
 ## 主要改动
-- 合并了几个activity 配置暂时没什么问题(除了录视频的activity)
-- 主线程更新data的ui可能早于请求网络的线程执行完毕完毕，导致第一次getdata不会更新data  解决方法：延迟更新UI，加上等待动画优化用户体验
-- 网络错误/相机获取错误可能导致崩溃 解决方法：catch后不执行后续操作
-- 增加“我的”按钮 拉取自己发布的视频
-- Menu设置背景进入BackgroundActivity
+- MainActivity有三个Fragment 布局完全相同，分别为
+   - HomeFragment 展示所有人的视频信息
+   - FriendFragment 展示用户关注的人的视频信息
+   - MineFragment 展示用户自己发布的视频信息   
+- 其他三个重新改为Activity 暂时设置为单例模式
+- 在根据时间戳生成id后，使用SecurityRandom在末尾加上三位随机数，减小id重复的概率
+- MineActivity增加了关注功能，输入用户id即可添加关注，使用SharedPreference保存
+
 
 ## 待改进
-- CustomCameraActivity正常使用
-- videoActivity进度条有点问题
-- UploadActivity里的备注(extra——value)的作用？
+- 点某些item时进度条离奇消失（同样的代码，虚拟机有手机上没有）
 - 所有的UI
-- 第一次登陆让用户起昵称 用SharedPreference保存 之后发布视频用此昵称
-- 录制->上传 首页->上传的不同模式
+- activity的模式
 

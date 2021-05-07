@@ -1,25 +1,25 @@
 package com.SJTU7.Tiktok;
 
 import android.Manifest;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -27,21 +27,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
-public class CustomCameraActivity extends AppCompatActivity implements SurfaceHolder.Callback {
+public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
 
     private final static int PERMISSION_REQUEST_CODE = 1001;
     private SurfaceView mSurfaceView;
@@ -55,19 +56,10 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     private boolean isRecording = false;
     private int timeing = 0;
     public Handler handler = new Handler();
-    public String mp4Path = "";
-    private String videoName;
+    private String mp4Path = "";
     private ProgressBar progressBar;
     private ImageButton btn_yes;
     private ImageButton btn_no;
-<<<<<<< HEAD
-=======
-    public File mediaFile;
-
-    private TextView btn_home;
-    private TextView btn_upload;
-    private TextView btn_mine;
->>>>>>> shenzheyun
 
     public static void startUI(Context context) {
         Intent intent = new Intent(context, CustomCameraActivity.class);
@@ -76,13 +68,18 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_camera);
-        setMenu();
-        mSurfaceView = findViewById(R.id.surfaceview);
-        mVideoView = findViewById(R.id.videoview);
-        mRecordButton = findViewById(R.id.bt_record);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_camera, container, false);
+        mSurfaceView = view.findViewById(R.id.surfaceview);
+        mVideoView = view.findViewById(R.id.videoview);
+        mRecordButton = view.findViewById(R.id.bt_record);
+        mRecordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                record(v);
+            }
+        });
 
 //        mTest = findViewById(R.id.rest_time);
         mHolder = mSurfaceView.getHolder();
@@ -92,23 +89,34 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
             initCamera();
         }catch (Exception e)
         {
-            Toast.makeText(CustomCameraActivity.this,"相机初始化失败",Toast.LENGTH_SHORT).show();
-            finish();
+            e.printStackTrace();
+            Toast.makeText(getContext(),"相机初始化失败",Toast.LENGTH_SHORT).show();
         }
 
         mHolder.addCallback(this);
-        progressBar = findViewById(R.id.progressbar);
+        progressBar = view.findViewById(R.id.progressbar);
         progressBar.setMax(1000);
         progressBar.setMin(0);
-        btn_yes = findViewById(R.id.btn_yes);
-        btn_no = findViewById(R.id.btn_no);
-<<<<<<< HEAD
-=======
-        btn_no.setColorFilter(Color.WHITE);
-        btn_yes.setColorFilter(Color.WHITE);
->>>>>>> shenzheyun
+        btn_yes = view.findViewById(R.id.btn_yes);
+        btn_yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pressYes(v);
+            }
+        });
+        btn_no = view.findViewById(R.id.btn_no);
+        btn_no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pressNo(v);
+            }
+        });
+        return view;
     }
-
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
     Runnable runnable =new Runnable() {
         @Override
         public void run() {
@@ -133,8 +141,8 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     };
 
     private void requestPermission() {
-        boolean hasCameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-        boolean hasAudioPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+        boolean hasCameraPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        boolean hasAudioPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
         if (hasCameraPermission && hasAudioPermission) {
 
         } else {
@@ -145,7 +153,7 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
             if (!hasAudioPermission) {
                 permission.add(Manifest.permission.RECORD_AUDIO);
             }
-            ActivityCompat.requestPermissions(this, permission.toArray(new String[permission.size()]), PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(getActivity(), permission.toArray(new String[permission.size()]), PERMISSION_REQUEST_CODE);
         }
 
     }
@@ -207,9 +215,9 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     }
 
     private String getOutputMediaPath() {
-        File mediaStorageDir = getExternalFilesDir(Environment.DIRECTORY_MOVIES);
-        videoName = "VIDEO_"+System.currentTimeMillis() + ".mp4";
-        mediaFile = new File(mediaStorageDir, videoName);
+        File mediaStorageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile = new File(mediaStorageDir, "IMG_" + timeStamp + ".mp4");
         if (!mediaFile.exists()) {
             mediaFile.getParentFile().mkdirs();
         }
@@ -223,27 +231,8 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         mRecordButton.setVisibility(View.VISIBLE);
     }
     public void pressYes(View view){
-<<<<<<< HEAD
-        Intent intent = new Intent(CustomCameraActivity.this,UploadActivity.class);
-=======
-//        try {
-//
-//            MediaStore.Images.Media.insertImage(this.getContentResolver(), mp4Path, videoName, null);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-         //最后通知图库更新
-//        Intent intentupdate = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//        Uri videoUri = Uri.parse("file://" + mp4Path);
-//        intentupdate.setData(videoUri);
-//        this.sendBroadcast(intentupdate);
-        Intent intent = new Intent(CustomCameraActivity.this,UploadActivity.class);
-//        File newFile = new File(mp4Path);
-//        Uri uri = FileProvider.getUriForFile (CustomCameraActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider", mediaFile);
-//        Log.d(" video path:  " + mp4Path);
-        intent.putExtra ("VideoPath", mp4Path);
->>>>>>> shenzheyun
-        startActivity(intent);
+        //Intent intent = new Intent(getContext(),UploadActivity.class);
+        //startActivity(intent);
     }
 
 
@@ -320,41 +309,26 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         if (mCamera == null) {
-            initCamera();
+            try {
+                initCamera();
+            }
+            catch(Exception e)
+            {
+                Toast.makeText(getContext(),"相机初始化失败", Toast.LENGTH_SHORT).show();
+            }
+
         }
         mCamera.startPreview();
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         mCamera.stopPreview();
     }
-    public void setMenu()
-    {
-        btn_home= findViewById(R.id.btn_home);
-        btn_upload = findViewById(R.id.btn_upload);
-        btn_mine = findViewById(R.id.btn_mine);
-        btn_home.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(CustomCameraActivity.this,MainActivity.class));
-            }
-        });
-        btn_upload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(CustomCameraActivity.this,UploadActivity.class));
-            }
-        });
-        btn_mine.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(CustomCameraActivity.this,MineActivity.class));
-            }
-        });
-    }
+
+
 }
