@@ -52,14 +52,14 @@
                 android:textSize="28dp"/>
             <TextView
                 android:id="@+id/text_name"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:paddingLeft="8dp"
                 android:text="张三"
                 android:textSize="28dp"/>
             <EditText
                 android:id="@+id/edit_name"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
                 android:text="张三"
@@ -70,6 +70,7 @@
                 android:id="@+id/btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
                 android:text="修改昵称" />
         </LinearLayout>
 

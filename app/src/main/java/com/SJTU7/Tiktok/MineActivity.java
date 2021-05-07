@@ -95,6 +95,11 @@ public class MineActivity extends AppCompatActivity {
                 }
                 else {
                     name = editName.getText().toString();
+                    if(name.length()>10)
+                    {
+                        Toast.makeText(MineActivity.this,"昵称过长",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     if(name.length()>0)
                     {
                         textName.setText(name);
