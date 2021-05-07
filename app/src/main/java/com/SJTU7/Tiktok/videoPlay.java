@@ -4,6 +4,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,7 +20,10 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -41,6 +45,7 @@ public class videoPlay extends AppCompatActivity {
     private String videoUrl;
     private ImageButton play_stop;
     static boolean isPlay = true;
+    private RelativeLayout Parent_relative;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -68,6 +73,7 @@ public class videoPlay extends AppCompatActivity {
         play_stop.setVisibility(View.INVISIBLE);
         play_stop.setColorFilter(Color.WHITE);
         play_stop.setImageResource(R.drawable.time_out);
+        Parent_relative=findViewById(R.id.layout_R);
         //监听"播放/暂停"按钮
         play_stop.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
@@ -136,6 +142,13 @@ public class videoPlay extends AppCompatActivity {
                     System.out.println(percent);
                 }
             });
+            player.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
+                @Override
+                public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+                    changeVideoSize();
+                }
+            });
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -154,6 +167,34 @@ public class videoPlay extends AppCompatActivity {
         });*/
 
 
+    }
+
+    public void changeVideoSize() {
+        int videoWidth = player.getVideoWidth();
+        int videoHeight = player.getVideoHeight();
+
+        int surfaceWidth = Parent_relative.getWidth();
+        int surfaceHeight = Parent_relative.getHeight();
+
+        //根据视频尺寸去计算->视频可以在sufaceView中放大的最大倍数。
+        float max;
+        //max= (float) videoWidth / (float) surfaceWidth;
+        //if (getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            //竖屏模式下按视频宽度计算放大倍数值
+        max = Math.max((float) videoWidth / (float) surfaceWidth, (float) videoHeight / (float) surfaceHeight);
+        //} else {
+            //横屏模式下按视频高度计算放大倍数值
+          //  max = Math.max(((float) videoWidth / (float) surfaceHeight), (float) videoHeight / (float) surfaceWidth);
+        //}
+
+        //视频宽高分别/最大倍数值 计算出放大后的视频尺寸
+        videoWidth = (int) Math.ceil((float) videoWidth / max);
+        videoHeight = (int) Math.ceil((float) videoHeight / max);
+
+        //无法直接设置视频尺寸，将计算出的视频尺寸设置到surfaceView 让视频自动填充。
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(videoWidth, videoHeight);
+        params.addRule(RelativeLayout.CENTER_VERTICAL, Parent_relative.getId());
+        Parent_relative.setLayoutParams(params);
     }
 
 

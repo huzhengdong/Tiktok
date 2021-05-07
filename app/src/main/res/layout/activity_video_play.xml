@@ -5,12 +5,17 @@
     android:background="@color/colorBlack"
     android:orientation="vertical">
 
-    <SurfaceView
-        android:id="@+id/surfaceView"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
-        />
+        android:id="@+id/layout_R"
+        android:orientation="vertical">
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
