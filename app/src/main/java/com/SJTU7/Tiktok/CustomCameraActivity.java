@@ -1,4 +1,4 @@
-package com.SJTU7.Tiktok;
+ package com.SJTU7.Tiktok;
 
 import android.Manifest;
 import android.content.ContentValues;
@@ -215,6 +215,8 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         btn_yes.setVisibility(View.INVISIBLE);
         btn_no.setVisibility(View.INVISIBLE);
         mRecordButton.setVisibility(View.VISIBLE);
+        File file1 = new File(mp4Path);
+        file1.delete();
     }
     public void pressYes(View view){
 //        try {
@@ -229,10 +231,6 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
 //        intentupdate.setData(videoUri);
 //        this.sendBroadcast(intentupdate);
         Intent intent = new Intent(CustomCameraActivity.this,UploadActivity.class);
-//        File newFile = new File(mp4Path);
-//        Uri uri = FileProvider.getUriForFile (CustomCameraActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider", mediaFile);
-//        Log.d(" video path:  " + mp4Path);
-        //intent.putExtra ("VideoPath", mp4Path);
         Constants.upload = true;
         Constants.mp4Path = mp4Path;
         startActivity(intent);
