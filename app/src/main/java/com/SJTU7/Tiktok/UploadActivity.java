@@ -1,9 +1,11 @@
 package com.SJTU7.Tiktok;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -22,6 +24,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -32,6 +36,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -43,6 +49,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import com.iceteck.silicompressorr.SiliCompressor;
 
 public class UploadActivity extends AppCompatActivity {
+    private final static int PERMISSION_REQUEST_CODE = 1001;
     private static final String TAG = "Upload";
     private static final long MAX_FILE_SIZE = 30 * 1024 * 1024;
     private static final int REQUEST_CODE_COVER_IMAGE = 101;
@@ -102,7 +109,26 @@ public class UploadActivity extends AppCompatActivity {
                 submit();
             }
         });
+        requestPermission();
         solveInfoFromCamera();
+    }
+
+    private void requestPermission() {
+        boolean hasCameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean hasAudioPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        if (hasCameraPermission && hasAudioPermission) {
+
+        } else {
+            List<String> permission = new ArrayList<String>();
+            if (!hasCameraPermission) {
+                permission.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (!hasAudioPermission) {
+                permission.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            ActivityCompat.requestPermissions(this, permission.toArray(new String[permission.size()]), PERMISSION_REQUEST_CODE);
+        }
+
     }
 
     private void solveInfoFromCamera()
@@ -234,7 +260,8 @@ public class UploadActivity extends AppCompatActivity {
             public void run(){
                 super.run();
                 try {
-                String systemPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+                //String systemPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+                String systemPath = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
                 Log.d(TAG, "systemPath: "+ systemPath);
                 mHandler.sendMessage(Message.obtain(mHandler, MSG_START_COMPRESS));
 

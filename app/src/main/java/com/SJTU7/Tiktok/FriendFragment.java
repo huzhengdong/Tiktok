@@ -60,6 +60,7 @@ public class FriendFragment extends Fragment
             @Override
             public void onClick(View v) {
                 getData();
+                recyclerView.scrollToPosition(0);
             }
         });
 
