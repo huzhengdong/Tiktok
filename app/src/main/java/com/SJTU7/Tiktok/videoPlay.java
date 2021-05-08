@@ -146,7 +146,8 @@ public class videoPlay extends AppCompatActivity {
                 else{
                     ((ImageButton)v).setImageResource(R.drawable.time_out);
                     player.start();
-                    handler.post(hideSeekBarRunnable);
+                    handler.postDelayed(hideSeekBarRunnable,3000);
+                    handler.post(hideplaystop);
 
                 }
                 isPlay = !isPlay;
@@ -251,6 +252,13 @@ public class videoPlay extends AppCompatActivity {
         }
     };
 
+    private final Runnable hideplaystop = new Runnable() {
+        @Override
+        public void run() {
+            play_stop.setVisibility(View.INVISIBLE);
+        }
+    };
+
     public boolean onTouchEvent(MotionEvent event){
         int action = event.getAction();
         switch (action){
@@ -264,7 +272,8 @@ public class videoPlay extends AppCompatActivity {
                 play_stop.setVisibility(View.VISIBLE);
                 if(isPlay)
                 {
-                    handler.post(hideSeekBarRunnable);
+                    handler.postDelayed(hideSeekBarRunnable,3000);
+                    handler.post(hideplaystop);
                 }
                 break;
             default:
