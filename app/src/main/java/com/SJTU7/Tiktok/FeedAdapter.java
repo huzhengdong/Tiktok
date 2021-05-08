@@ -69,12 +69,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.VideoViewHolde
                 if(holder.tv_friend.getText().equals("关注"))
                 {
                     holder.tv_friend.setText("已关注");
-                    holder.tv_friend.setBackgroundColor(Color.GRAY);
+                    //holder.tv_friend.setBackgroundColor(Color.GRAY);
+                    holder.tv_friend.setBackgroundResource(R.drawable.textview_grey);
                     Constants.friend_id.add(video.getStudentId());
                 }else{
                     holder.tv_friend.setText("关注");
-                    holder.tv_friend.setBackgroundColor(0xFFFF8080);
+                    //holder.tv_friend.setBackgroundColor(0xFFFF8080);
                     Constants.friend_id.remove(video.getStudentId());
+                    holder.tv_friend.setBackgroundResource(R.drawable.textview);
                 }
 
             }
@@ -100,11 +102,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.VideoViewHolde
         if(Constants.friend_id.contains(videoItem.getStudentId()))
         {
             holder.tv_friend.setText("已关注");
-            holder.tv_friend.setBackgroundColor(Color.GRAY);
+            //holder.tv_friend.setBackgroundColor(Color.GRAY);
+            holder.tv_friend.setBackgroundResource(R.drawable.textview_grey);
         }
         else {
             holder.tv_friend.setText("关注");
-            holder.tv_friend.setBackgroundColor(0xFFFF8080);
+            //holder.tv_friend.setBackgroundColor(0xFFFF8080);
+            holder.tv_friend.setBackgroundResource(R.drawable.textview);
             }
     }
 
