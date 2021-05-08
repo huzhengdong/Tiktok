@@ -130,6 +130,18 @@ public class MainActivity extends AppCompatActivity {
         });
         tabLayout.setupWithViewPager(pager);
     }
+
+    @Override
+    protected void onPause() {//写在onDestroy会导致没有执行完程序已经结束了 onStop也不行 可能是单例模式的问题
+        super.onPause();
+        editor.putInt("friend_amount",Constants.friend_id.size());
+        for(int i = 0;i < Constants.friend_id.size();i++)
+        {
+            editor.putString("friend"+i,Constants.friend_id.get(i));
+        }
+        editor.apply();
+    }
+
     @SuppressLint("ResourceAsColor")
     public void setMenu()
     {

@@ -1,6 +1,7 @@
 package com.SJTU7.Tiktok;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.VideoViewHolde
         private TextView toTV;
         private TextView contentTV;
         private View videoView;
+        private TextView tv_friend;
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
             videoView = itemView;
@@ -35,6 +37,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.VideoViewHolde
             toTV = itemView.findViewById(R.id.tv_to);
             contentTV = itemView.findViewById(R.id.tv_content);
             coverSD = itemView.findViewById(R.id.sd_cover);
+            tv_friend = itemView.findViewById(R.id.tv_friend);
         }
 
     }
@@ -46,7 +49,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.VideoViewHolde
         VideoViewHolder holder = new VideoViewHolder(view);
 
 
-        holder.videoView.setOnClickListener(new View.OnClickListener()
+        holder.coverSD.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -56,6 +59,26 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.VideoViewHolde
                 Intent intent = new Intent(v.getContext(), videoPlay.class);
                 intent.putExtra("videoUrl", video.getVideoUrl());
                 v.getContext().startActivity(intent);
+            }
+        });
+        holder.tv_friend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = holder.getAdapterPosition();
+                VideoItem video = videoItemList.get(position);
+                if(holder.tv_friend.getText().equals("关注"))
+                {
+                    holder.tv_friend.setText("已关注");
+                    //holder.tv_friend.setBackgroundColor(Color.GRAY);
+                    holder.tv_friend.setBackgroundResource(R.drawable.textview_grey);
+                    Constants.friend_id.add(video.getStudentId());
+                }else{
+                    holder.tv_friend.setText("关注");
+                    //holder.tv_friend.setBackgroundColor(0xFFFF8080);
+                    Constants.friend_id.remove(video.getStudentId());
+                    holder.tv_friend.setBackgroundResource(R.drawable.textview);
+                }
+
             }
         });
 
@@ -72,6 +95,21 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.VideoViewHolde
         holder.fromTV.setText("@"+videoItem.getUserName());
         holder.contentTV.setText(videoItem.getContent());
         holder.toTV.setText("Published at: "+videoItem.getCreatedAt());
+        if(videoItem.getStudentId().equals(Constants.USER_ID))
+        {
+            holder.tv_friend.setVisibility(View.GONE);
+        }
+        if(Constants.friend_id.contains(videoItem.getStudentId()))
+        {
+            holder.tv_friend.setText("已关注");
+            //holder.tv_friend.setBackgroundColor(Color.GRAY);
+            holder.tv_friend.setBackgroundResource(R.drawable.textview_grey);
+        }
+        else {
+            holder.tv_friend.setText("关注");
+            //holder.tv_friend.setBackgroundColor(0xFFFF8080);
+            holder.tv_friend.setBackgroundResource(R.drawable.textview);
+            }
     }
 
     @Override

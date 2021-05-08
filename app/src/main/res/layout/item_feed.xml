@@ -29,6 +29,21 @@
         />
 
     <TextView
+        android:id="@+id/tv_friend"
+        android:layout_width="45dp"
+        android:layout_height="25dp"
+        android:text="关注"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:paddingBottom="2dp"
+        android:background="@drawable/textview"
+        android:layout_toEndOf="@id/tv_from"
+        android:layout_above="@id/tv_to"
+        android:layout_marginBottom="35dp"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/pureWhite"/>
+
+    <TextView
         android:id="@+id/tv_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
