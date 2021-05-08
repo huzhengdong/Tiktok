@@ -288,13 +288,14 @@ public class UploadActivity extends AppCompatActivity {
 
                     Looper.prepare();
                     Toast.makeText(UploadActivity.this,"压缩完毕",Toast.LENGTH_SHORT).show();
-                    Looper.loop();
+
 
                     flag=true;
                     //  将 path 转换为 Uri
                     videoUri = Uri.parse("file://"+compressPath);
                     Log.d(TAG, "submit - videoUri: " + videoUri);
                     btn_compress.setText("压缩完毕");
+                    Looper.loop();
 
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
