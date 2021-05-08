@@ -46,14 +46,26 @@
     </com.facebook.drawee.view.SimpleDraweeView>
 
     </FrameLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
     <Button
         android:id="@+id/btn_video"
         android:layout_width="100dp"
         android:layout_height="48dp"
         android:text="选择视频"
         android:layout_gravity="center"
+        android:layout_marginRight="30dp"
         />
-
+    <Button
+        android:id="@+id/btn_compress"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        android:text="压缩视频"
+        android:layout_gravity="center"
+        android:layout_marginLeft="30dp"/>
+    </LinearLayout>
     <EditText
         android:id="@+id/et_extra_content"
         android:layout_width="match_parent"
@@ -71,6 +83,7 @@
         android:layout_width="200dp"
         android:layout_height="80dp"
         android:layout_gravity="center"
+        android:gravity="center"
         android:layout_marginTop="60dp"
         android:text="提交"
         android:textSize="30sp" />

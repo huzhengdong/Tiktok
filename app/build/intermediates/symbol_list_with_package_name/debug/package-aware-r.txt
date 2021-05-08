@@ -749,6 +749,7 @@ id beginning
 id blocking
 id bottom
 id btn_all
+id btn_compress
 id btn_cover
 id btn_mine
 id btn_send
@@ -785,7 +786,6 @@ id fitStart
 id fitXY
 id focusCrop
 id forever
-id gray_view
 id group_divider
 id home
 id homeAsUp
