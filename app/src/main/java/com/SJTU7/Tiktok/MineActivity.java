@@ -2,14 +2,15 @@ package com.SJTU7.Tiktok;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSnapHelper;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -26,6 +27,7 @@ public class MineActivity extends AppCompatActivity {
     private TextView btn_record;
     private TextView btn_upload;
     private TextView btn_home;
+    private TextView btn_mine;
 
     private SharedPreferences spdata;
     private SharedPreferences.Editor editor;
@@ -34,6 +36,8 @@ public class MineActivity extends AppCompatActivity {
     private FriendAdapter adapter = new FriendAdapter();
     private EditText et_add;
     private Button btn_add;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +98,11 @@ public class MineActivity extends AppCompatActivity {
                 }
                 else {
                     name = editName.getText().toString();
+                    if(name.length()>10)
+                    {
+                        Toast.makeText(MineActivity.this,"昵称过长",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     if(name.length()>0)
                     {
                         textName.setText(name);
@@ -115,6 +124,12 @@ public class MineActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        adapter.setData(Constants.friend_id);
+    }
+
+    @Override
     protected void onPause() {//写在onDestroy会导致没有执行完程序已经结束了 onStop也不行 可能是单例模式的问题
         super.onPause();
         editor.putString("name",Constants.USER_NAME);
@@ -131,6 +146,8 @@ public class MineActivity extends AppCompatActivity {
         btn_home = findViewById(R.id.btn_home);
         btn_record = findViewById(R.id.btn_record);
         btn_upload = findViewById(R.id.btn_upload);
+        btn_mine = findViewById(R.id.btn_mine);
+        btn_mine.setTextColor(Color.WHITE);
         btn_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

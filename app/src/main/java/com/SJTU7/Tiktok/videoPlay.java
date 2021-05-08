@@ -4,26 +4,29 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.os.Build;
-import android.os.Bundle;
+
 import android.os.Handler;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import android.util.Log;
+
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+
 import android.widget.ImageButton;
+
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -38,9 +41,9 @@ public class videoPlay extends AppCompatActivity {
     private Runnable runnable;
     private TextView textViewTime;
     private TextView textViewCurrentPosition;
-    private String videoUrl;
     private ImageButton play_stop;
     static boolean isPlay = true;
+    private RelativeLayout Parent_relative;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -68,22 +71,9 @@ public class videoPlay extends AppCompatActivity {
         play_stop.setVisibility(View.INVISIBLE);
         play_stop.setColorFilter(Color.WHITE);
         play_stop.setImageResource(R.drawable.time_out);
+        Parent_relative=findViewById(R.id.layout_R);
         //监听"播放/暂停"按钮
-        play_stop.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                if(isPlay){
-                    ((ImageButton)v).setImageResource(R.drawable.play_circle);
-                    player.pause();
 
-                }
-                else{
-                    ((ImageButton)v).setImageResource(R.drawable.time_out);
-                    player.start();
-
-                }
-                isPlay = !isPlay;
-            }
-        });
 
 
         Intent intent =getIntent();
@@ -136,24 +126,54 @@ public class videoPlay extends AppCompatActivity {
                     System.out.println(percent);
                 }
             });
+            player.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
+                @Override
+                public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+                    changeVideoSize();
+                }
+            });
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+        play_stop.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                if(isPlay){
+                    ((ImageButton)v).setImageResource(R.drawable.play_circle);
+                    player.pause();
 
-        /*findViewById(R.id.buttonPlay).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                player.start();
+                }
+                else{
+                    ((ImageButton)v).setImageResource(R.drawable.time_out);
+                    player.start();
+                    handler.postDelayed(hideSeekBarRunnable,3000);
+                    handler.post(hideplaystop);
+
+                }
+                isPlay = !isPlay;
             }
         });
-        findViewById(R.id.buttonPause).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                player.pause();
-            }
-        });*/
 
 
+    }
+
+    public void changeVideoSize() {
+        int videoWidth = player.getVideoWidth();
+        int videoHeight = player.getVideoHeight();
+
+        int surfaceWidth = Parent_relative.getWidth();
+        int surfaceHeight = Parent_relative.getHeight();
+
+        //根据视频尺寸去计算->视频可以在sufaceView中放大的最大倍数。
+        float max;
+        max = Math.max((float) videoWidth / (float) surfaceWidth, (float) videoHeight / (float) surfaceHeight);
+        videoWidth = (int) Math.ceil((float) videoWidth / max);
+        videoHeight = (int) Math.ceil((float) videoHeight / max);
+
+        //无法直接设置视频尺寸，将计算出的视频尺寸设置到surfaceView 让视频自动填充。
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(videoWidth, videoHeight);
+        params.addRule(RelativeLayout.CENTER_VERTICAL, Parent_relative.getId());
+        Parent_relative.setLayoutParams(params);
     }
 
 
@@ -232,16 +252,29 @@ public class videoPlay extends AppCompatActivity {
         }
     };
 
+    private final Runnable hideplaystop = new Runnable() {
+        @Override
+        public void run() {
+            play_stop.setVisibility(View.INVISIBLE);
+        }
+    };
+
     public boolean onTouchEvent(MotionEvent event){
         int action = event.getAction();
         switch (action){
             case MotionEvent.ACTION_DOWN:
+
                 handler.removeCallbacks(hideSeekBarRunnable);
+                onClickView(play_stop);
                 textViewTime.setVisibility(View.VISIBLE);
                 textViewCurrentPosition.setVisibility(View.VISIBLE);
                 seekBar.setVisibility(View.VISIBLE);
                 play_stop.setVisibility(View.VISIBLE);
-                handler.postDelayed(hideSeekBarRunnable,3000);
+                if(isPlay)
+                {
+                    handler.postDelayed(hideSeekBarRunnable,3000);
+                    handler.post(hideplaystop);
+                }
                 break;
             default:
                 break;
@@ -250,6 +283,18 @@ public class videoPlay extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
+    public void onClickView(View v){
+        if(isPlay){
+            ((ImageButton)v).setImageResource(R.drawable.play_circle);
+            player.pause();
 
+        }
+        else{
+            ((ImageButton)v).setImageResource(R.drawable.time_out);
+            player.start();
+
+        }
+        isPlay = !isPlay;
+    }
 
 }

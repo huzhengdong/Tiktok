@@ -1,22 +1,21 @@
 package com.SJTU7.Tiktok;
 
 import android.Manifest;
-import android.content.ContentValues;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.ImageFormat;
+
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
-import android.net.Uri;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.provider.MediaStore;
-import android.util.Log;
+
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -31,14 +30,10 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class CustomCameraActivity extends AppCompatActivity implements SurfaceHolder.Callback {
@@ -60,14 +55,12 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     private ProgressBar progressBar;
     private ImageButton btn_yes;
     private ImageButton btn_no;
-<<<<<<< HEAD
-=======
     public File mediaFile;
 
     private TextView btn_home;
     private TextView btn_upload;
     private TextView btn_mine;
->>>>>>> shenzheyun
+    private TextView btn_record;
 
     public static void startUI(Context context) {
         Intent intent = new Intent(context, CustomCameraActivity.class);
@@ -102,11 +95,8 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         progressBar.setMin(0);
         btn_yes = findViewById(R.id.btn_yes);
         btn_no = findViewById(R.id.btn_no);
-<<<<<<< HEAD
-=======
         btn_no.setColorFilter(Color.WHITE);
         btn_yes.setColorFilter(Color.WHITE);
->>>>>>> shenzheyun
     }
 
     Runnable runnable =new Runnable() {
@@ -221,11 +211,10 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         btn_yes.setVisibility(View.INVISIBLE);
         btn_no.setVisibility(View.INVISIBLE);
         mRecordButton.setVisibility(View.VISIBLE);
+        File file1 = new File(mp4Path);
+        file1.delete();
     }
     public void pressYes(View view){
-<<<<<<< HEAD
-        Intent intent = new Intent(CustomCameraActivity.this,UploadActivity.class);
-=======
 //        try {
 //
 //            MediaStore.Images.Media.insertImage(this.getContentResolver(), mp4Path, videoName, null);
@@ -238,12 +227,10 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
 //        intentupdate.setData(videoUri);
 //        this.sendBroadcast(intentupdate);
         Intent intent = new Intent(CustomCameraActivity.this,UploadActivity.class);
-//        File newFile = new File(mp4Path);
-//        Uri uri = FileProvider.getUriForFile (CustomCameraActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider", mediaFile);
-//        Log.d(" video path:  " + mp4Path);
-        intent.putExtra ("VideoPath", mp4Path);
->>>>>>> shenzheyun
+        Constants.upload = true;
+        Constants.mp4Path = mp4Path;
         startActivity(intent);
+        finish();
     }
 
 
@@ -335,9 +322,11 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
     }
     public void setMenu()
     {
-        btn_home= findViewById(R.id.btn_home);
+        btn_home = findViewById(R.id.btn_home);
+        btn_record = findViewById(R.id.btn_record);
         btn_upload = findViewById(R.id.btn_upload);
         btn_mine = findViewById(R.id.btn_mine);
+        btn_record.setTextColor(Color.WHITE);
         btn_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -358,3 +347,4 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         });
     }
 }
+

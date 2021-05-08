@@ -1,60 +1,3 @@
-<<<<<<< HEAD
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
-    <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/sd_cover"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:actualImageScaleType="centerCrop"
-        app:roundedCornerRadius="8dp"
-        app:overlayImage="@drawable/bg_round_rect"
-        android:scaleType="fitXY"
-        />
-
-    <TextView
-        android:id="@+id/tv_from"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textColor="#ffffff"
-        android:layout_alignBottom="@id/sd_cover"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="80dp"
-        android:maxLines="1"
-        tools:text="FROM: WRR"
-        />
-
-    <TextView
-        android:id="@+id/tv_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:textSize="15sp"
-        android:textColor="#ffffff"
-        android:layout_alignBottom="@id/sd_cover"
-        android:layout_marginBottom="50dp"
-        tools:text="TO: ALL"
-        />
-
-    <TextView
-        android:id="@+id/tv_to"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="10sp"
-        android:textColor="#ffffff"
-        android:layout_alignBottom="@id/sd_cover"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="30dp"
-        android:maxLines="3"
-        android:ellipsize="end"
-        tools:text="这是内容。。。。。。"
-        />
-=======
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -86,6 +29,21 @@
         />
 
     <TextView
+        android:id="@+id/tv_friend"
+        android:layout_width="45dp"
+        android:layout_height="25dp"
+        android:text="关注"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:paddingBottom="2dp"
+        android:background="@drawable/textview"
+        android:layout_toEndOf="@id/tv_from"
+        android:layout_above="@id/tv_to"
+        android:layout_marginBottom="35dp"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/pureWhite"/>
+
+    <TextView
         android:id="@+id/tv_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -110,5 +68,4 @@
         android:ellipsize="end"
         tools:text="这是内容。。。。。。"
         />
->>>>>>> shenzheyun
 </RelativeLayout>

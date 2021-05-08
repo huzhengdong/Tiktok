@@ -41,6 +41,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:paddingTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -52,23 +53,25 @@
                 android:textSize="28dp"/>
             <TextView
                 android:id="@+id/text_name"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:paddingLeft="8dp"
                 android:text="张三"
                 android:textSize="28dp"/>
             <EditText
                 android:id="@+id/edit_name"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
                 android:text="张三"
                 android:textSize="28dp"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:maxLines="1"/>
             <Button
                 android:id="@+id/btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
                 android:text="修改昵称" />
         </LinearLayout>
 
@@ -94,7 +97,8 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                android:hint="请在此输入用户id"/>
+                android:hint="请在此输入用户id"
+                android:maxLines="1"/>
             <Button
                 android:id="@+id/btn_add"
                 android:layout_width="80dp"

@@ -1,26 +1,33 @@
 package com.SJTU7.Tiktok;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -31,6 +38,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -42,6 +51,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import com.iceteck.silicompressorr.SiliCompressor;
 
 public class UploadActivity extends AppCompatActivity {
+    private final static int PERMISSION_REQUEST_CODE = 1001;
     private static final String TAG = "Upload";
     private static final long MAX_FILE_SIZE = 30 * 1024 * 1024;
     private static final int REQUEST_CODE_COVER_IMAGE = 101;
@@ -67,7 +77,13 @@ public class UploadActivity extends AppCompatActivity {
 
     private TextView btn_home;
     private TextView btn_record;
+    private TextView btn_upload;
     private TextView btn_mine;
+
+    private Button btn_submit;
+    private Button btn_compress;
+    private LottieAnimationView lottieAnimationView;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,19 +94,11 @@ public class UploadActivity extends AppCompatActivity {
         coverSD = findViewById(R.id.sd_cover);
         videoSD = findViewById(R.id.sd_video);
         animationView = findViewById(R.id.animation_view);
+        btn_submit = findViewById(R.id.btn_submit);
+        btn_compress = findViewById(R.id.btn_compress);
+        lottieAnimationView = findViewById(R.id.lottie_view);
 
         extraContentEditText = findViewById(R.id.et_extra_content);
-
-        if (getIntent().getStringExtra("VideoPath") != null) {
-            String videoPath = getIntent().getStringExtra("VideoPath");
-            Log.d(TAG, "received video path:  " + videoPath);
-            videoUri = Uri.parse("file://" + videoPath);
-            Log.d(TAG, "received video uri:  " + videoUri);
-            coverImageUri = getVideoThumb(this,videoUri);
-            coverSD.setImageURI(coverImageUri);
-            videoSD.setImageURI(coverImageUri);
-            compress();
-        }
 
         findViewById(R.id.btn_cover).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,12 +114,60 @@ public class UploadActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.btn_compress).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btn_compress.setEnabled(false);
+                compress();
+            }
+        });
+
         findViewById(R.id.btn_submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 submit();
             }
         });
+        requestPermission();
+        solveInfoFromCamera();
+    }
+
+    private void requestPermission() {
+        boolean hasCameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean hasAudioPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        if (hasCameraPermission && hasAudioPermission) {
+
+        } else {
+            List<String> permission = new ArrayList<String>();
+            if (!hasCameraPermission) {
+                permission.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (!hasAudioPermission) {
+                permission.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            ActivityCompat.requestPermissions(this, permission.toArray(new String[permission.size()]), PERMISSION_REQUEST_CODE);
+        }
+
+    }
+
+    private void solveInfoFromCamera()
+    {
+        if (Constants.upload) {
+            String videoPath = Constants.mp4Path;
+            Log.d(TAG, "received video path:  " + videoPath);
+            videoUri = Uri.parse("file://" + videoPath);
+            Log.d(TAG, "received video uri:  " + videoUri);
+            coverImageUri = getVideoThumb(this,videoUri);
+            coverSD.setImageURI(coverImageUri);
+            videoSD.setImageURI(coverImageUri);
+            Constants.upload = false;
+            Constants.mp4Path = "";
+        }
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        solveInfoFromCamera();
     }
 
     private Uri getVideoThumb(Context context, Uri uri) {
@@ -142,11 +198,11 @@ public class UploadActivity extends AppCompatActivity {
         }
         // 最后通知图库更新
         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        coverImageUri = Uri.fromFile(coverFile);
-        Log.d(TAG, "cover uri:  " + coverImageUri);
-        intent.setData(coverImageUri);
+        Uri coverUri = Uri.fromFile(coverFile);
+        Log.d(TAG, "cover uri:  " + coverUri);
+        intent.setData(coverUri);
         context.sendBroadcast(intent);
-        return coverImageUri;
+        return coverUri;
     }
 
     @Override
@@ -171,14 +227,13 @@ public class UploadActivity extends AppCompatActivity {
         if (REQUEST_CODE_VIDEO == requestCode) {
             if (resultCode == Activity.RESULT_OK) {
                 videoUri = data.getData();
-                videoSD.setImageURI(videoUri);
+                videoSD.setImageURI(getVideoThumb(this,videoUri));
 
                 if (videoUri != null) {
                     Log.d(TAG, "pick video " + videoUri.toString());
                 } else {
                     Log.d(TAG, "uri2File fail " + data.getData());
                 }
-                compress();
             } else {
                 Log.d(TAG, "file pick fail");
             }
@@ -221,20 +276,33 @@ public class UploadActivity extends AppCompatActivity {
             @Override
             public void run(){
                 super.run();
-                String systemPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
-                Log.d(TAG, "systemPath: "+ systemPath);
-                mHandler.sendMessage(Message.obtain(mHandler, MSG_START_COMPRESS));
-
                 try {
+                    //String systemPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+                    String systemPath = getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath();
+                    Log.d(TAG, "systemPath: "+ systemPath);
+                    mHandler.sendMessage(Message.obtain(mHandler, MSG_START_COMPRESS));
+
                     compressPath = SiliCompressor.with(UploadActivity.this).compressVideo(videoUri,systemPath);
+                    Log.d(TAG, "compressPath: "+ compressPath);
+                    mHandler.sendMessage(Message.obtain(mHandler, MSG_END_COMPRESS));
+
+                    Looper.prepare();
+                    Toast.makeText(UploadActivity.this,"压缩完毕",Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+
+                    flag=true;
+                    //  将 path 转换为 Uri
+                    videoUri = Uri.parse("file://"+compressPath);
+                    Log.d(TAG, "submit - videoUri: " + videoUri);
+                    btn_compress.setText("压缩完毕");
+
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
-                }
-                Log.d(TAG, "compressPath: "+ compressPath);
-                mHandler.sendMessage(Message.obtain(mHandler, MSG_END_COMPRESS));
+                    Looper.prepare();
+                    Toast.makeText(UploadActivity.this,"压缩失败",Toast.LENGTH_SHORT).show();
+                    Looper.loop();
 
-                System.out.println("压缩完毕");
-                flag=true;
+                }
             }
         }.start();
     }
@@ -256,48 +324,78 @@ public class UploadActivity extends AppCompatActivity {
         startActivityForResult(intent, requestCode);
     }
 
+    private void submit_recover(){
+        btn_submit.setText("提交");
+        findViewById(R.id.btn_submit).setEnabled(true);
+    }
+
+
+
     private void submit() {
 
-        // TODO
+
         //  获取图片信息
+
         byte[] coverImageData = readDataFromUri(coverImageUri);
 
-        // TODO
-        //  获取视频信息
-        //  将 path 转换为 Uri
 
-        videoUri = Uri.parse("file://"+compressPath);
-        Log.d(TAG, "submit - videoUri: " + videoUri);
+        //  获取视频信息
         byte[] videoData = readDataFromUri(videoUri);
 
+        btn_submit.setText("正在上传");
+        findViewById(R.id.btn_submit).setEnabled(false);
+        lottieAnimationView.setVisibility(View.VISIBLE);
+        lottieAnimationView.playAnimation();
 
-        // TODO
+        Runnable button_recover = new Runnable() {
+            @Override
+            public void run() {
+                btn_submit.setText("重新提交");
+                findViewById(R.id.btn_submit).setEnabled(true);
+                lottieAnimationView.setVisibility(View.INVISIBLE);
+                lottieAnimationView.pauseAnimation();
+            }
+        };
+
+
         //  关于封面和视频信息的判断
         if (coverImageData == null || coverImageData.length == 0) {
             Toast.makeText(this, "封面不存在", Toast.LENGTH_SHORT).show();
+            submit_recover();
+            lottieAnimationView.setVisibility(View.INVISIBLE);
+            lottieAnimationView.pauseAnimation();
             return;
         }
 
         if (videoData == null || videoData.length == 0) {
             Toast.makeText(this, "视频为空", Toast.LENGTH_SHORT).show();
+            submit_recover();
+            lottieAnimationView.setVisibility(View.INVISIBLE);
+            lottieAnimationView.pauseAnimation();
             return;
         }
 
         String content = extraContentEditText.getText().toString();
         if (TextUtils.isEmpty(content)) {
             Toast.makeText(this, "请输入视频备注", Toast.LENGTH_SHORT).show();
+            submit_recover();
+            lottieAnimationView.setVisibility(View.INVISIBLE);
+            lottieAnimationView.pauseAnimation();
             return;
         }
 
         if ( coverImageData.length + videoData.length >= MAX_FILE_SIZE) {
             Toast.makeText(this, "文件过大", Toast.LENGTH_SHORT).show();
+            submit_recover();
+            lottieAnimationView.setVisibility(View.INVISIBLE);
+            lottieAnimationView.pauseAnimation();
             return;
         }
-        //TODO 5
+
         // 使用api.submitMessage()方法提交留言
         // 如果提交成功则关闭activity，否则弹出toast
 
-        // TODO NEW
+
         //  更改 Body 中的内容，来自前端界面
         MultipartBody.Part image_part = MultipartBody.Part.createFormData(
                 "cover_image",
@@ -309,8 +407,14 @@ public class UploadActivity extends AppCompatActivity {
                 "video_file.mp4",
                 RequestBody.create(MediaType.parse("multipart/form_data"), videoData)
         );
-        // TODO NEW
+
         //  更改 Call 的组成，应该和 submit 所需的网址要求相符合
+
+
+
+
+
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -323,17 +427,19 @@ public class UploadActivity extends AppCompatActivity {
                 try {
                     Response<UploadResponse> response = call.execute();
                     if (response.isSuccessful() && response.body().success){
-                        new Handler(getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.d("upload", "run: back");
-                                Intent intent = new Intent(UploadActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            }
-                        });
+                        Log.d("upload", "run: back");
+                        Intent intent = new Intent(UploadActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                    else {
+                        Log.d("upload", "");
+                        mHandler.post(button_recover);
+
                     }
                 } catch(IOException e){
                     e.printStackTrace();
+                    mHandler.post(button_recover);
                 }
             }
         }).start();
@@ -355,25 +461,31 @@ public class UploadActivity extends AppCompatActivity {
     public void setMenu()
     {
         btn_home = findViewById(R.id.btn_home);
-        btn_record= findViewById(R.id.btn_record);
+        btn_record = findViewById(R.id.btn_record);
+        btn_upload = findViewById(R.id.btn_upload);
         btn_mine = findViewById(R.id.btn_mine);
+        btn_upload.setTextColor(Color.WHITE);
         btn_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(UploadActivity.this,MainActivity.class));
+                finish();
             }
         });
         btn_record.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(UploadActivity.this,CustomCameraActivity.class));
+                finish();
             }
         });
         btn_mine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(UploadActivity.this,MineActivity.class));
+                finish();
             }
         });
     }
 }
+

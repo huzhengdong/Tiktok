@@ -5,12 +5,27 @@
     android:background="@color/colorBlack"
     android:orientation="vertical">
 
-    <SurfaceView
-        android:id="@+id/surfaceView"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/layout_R"
+        android:orientation="vertical">
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    </RelativeLayout>
 
-        />
+    <ImageButton
+        android:scaleType="centerInside"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="#00000000"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:alpha="0.5"
+        android:id="@+id/btn" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,16 +44,10 @@
             android:textColor="@color/colorWhite"
             android:text="00:00" />
 
-        <ImageButton
-            android:scaleType="centerInside"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="#00000000"
-            android:id="@+id/btn" />
 
         <SeekBar
             android:id="@+id/seekbar"
-            android:layout_width="230dp"
+            android:layout_width="260dp"
             android:layout_height="wrap_content" />
 
         <TextView

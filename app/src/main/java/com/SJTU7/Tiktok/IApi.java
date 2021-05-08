@@ -1,8 +1,6 @@
 package com.SJTU7.Tiktok;
 
 
-import com.SJTU7.Tiktok.UploadResponse;
-
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Multipart;

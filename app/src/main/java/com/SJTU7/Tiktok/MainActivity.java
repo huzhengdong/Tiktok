@@ -3,47 +3,29 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 import androidx.viewpager.widget.ViewPager;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
-import com.SJTU7.Tiktok.VideoItem;
 
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.SJTU7.Tiktok.VideoItemListResponse;
+import android.widget.TextView;
+
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.material.tabs.TabLayout;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
-import com.airbnb.lottie.LottieAnimationView;
 
 public class MainActivity extends AppCompatActivity {
     private FeedAdapter adapter = new FeedAdapter();
@@ -53,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences spdata;
     private SharedPreferences.Editor editor;
     private String user_id;
+    private TextView btn_home;
     private TextView btn_record;
     private TextView btn_upload;
     private TextView btn_mine;
@@ -147,11 +130,26 @@ public class MainActivity extends AppCompatActivity {
         });
         tabLayout.setupWithViewPager(pager);
     }
+
+    @Override
+    protected void onPause() {//写在onDestroy会导致没有执行完程序已经结束了 onStop也不行 可能是单例模式的问题
+        super.onPause();
+        editor.putInt("friend_amount",Constants.friend_id.size());
+        for(int i = 0;i < Constants.friend_id.size();i++)
+        {
+            editor.putString("friend"+i,Constants.friend_id.get(i));
+        }
+        editor.apply();
+    }
+
+    @SuppressLint("ResourceAsColor")
     public void setMenu()
     {
+        btn_home = findViewById(R.id.btn_home);
         btn_record = findViewById(R.id.btn_record);
         btn_upload = findViewById(R.id.btn_upload);
         btn_mine = findViewById(R.id.btn_mine);
+        btn_home.setTextColor(Color.WHITE);
         btn_record.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
