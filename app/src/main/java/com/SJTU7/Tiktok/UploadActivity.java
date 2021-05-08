@@ -329,10 +329,13 @@ public class UploadActivity extends AppCompatActivity {
         findViewById(R.id.btn_submit).setEnabled(true);
     }
 
+
+
     private void submit() {
 
 
         //  获取图片信息
+
         byte[] coverImageData = readDataFromUri(coverImageUri);
 
 
@@ -344,17 +347,31 @@ public class UploadActivity extends AppCompatActivity {
         lottieAnimationView.setVisibility(View.VISIBLE);
         lottieAnimationView.playAnimation();
 
+        Runnable button_recover = new Runnable() {
+            @Override
+            public void run() {
+                btn_submit.setText("重新提交");
+                findViewById(R.id.btn_submit).setEnabled(true);
+                lottieAnimationView.setVisibility(View.INVISIBLE);
+                lottieAnimationView.pauseAnimation();
+            }
+        };
+
 
         //  关于封面和视频信息的判断
         if (coverImageData == null || coverImageData.length == 0) {
             Toast.makeText(this, "封面不存在", Toast.LENGTH_SHORT).show();
             submit_recover();
+            lottieAnimationView.setVisibility(View.INVISIBLE);
+            lottieAnimationView.pauseAnimation();
             return;
         }
 
         if (videoData == null || videoData.length == 0) {
             Toast.makeText(this, "视频为空", Toast.LENGTH_SHORT).show();
             submit_recover();
+            lottieAnimationView.setVisibility(View.INVISIBLE);
+            lottieAnimationView.pauseAnimation();
             return;
         }
 
@@ -362,12 +379,16 @@ public class UploadActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(content)) {
             Toast.makeText(this, "请输入视频备注", Toast.LENGTH_SHORT).show();
             submit_recover();
+            lottieAnimationView.setVisibility(View.INVISIBLE);
+            lottieAnimationView.pauseAnimation();
             return;
         }
 
         if ( coverImageData.length + videoData.length >= MAX_FILE_SIZE) {
             Toast.makeText(this, "文件过大", Toast.LENGTH_SHORT).show();
             submit_recover();
+            lottieAnimationView.setVisibility(View.INVISIBLE);
+            lottieAnimationView.pauseAnimation();
             return;
         }
 
@@ -388,6 +409,12 @@ public class UploadActivity extends AppCompatActivity {
         );
 
         //  更改 Call 的组成，应该和 submit 所需的网址要求相符合
+
+
+
+
+
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -400,18 +427,19 @@ public class UploadActivity extends AppCompatActivity {
                 try {
                     Response<UploadResponse> response = call.execute();
                     if (response.isSuccessful() && response.body().success){
-                        new Handler(getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.d("upload", "run: back");
-                                Intent intent = new Intent(UploadActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }
-                        });
+                        Log.d("upload", "run: back");
+                        Intent intent = new Intent(UploadActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                    else {
+                        Log.d("upload", "");
+                        mHandler.post(button_recover);
+
                     }
                 } catch(IOException e){
                     e.printStackTrace();
+                    mHandler.post(button_recover);
                 }
             }
         }).start();
@@ -441,18 +469,21 @@ public class UploadActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(UploadActivity.this,MainActivity.class));
+                finish();
             }
         });
         btn_record.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(UploadActivity.this,CustomCameraActivity.class));
+                finish();
             }
         });
         btn_mine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(UploadActivity.this,MineActivity.class));
+                finish();
             }
         });
     }
