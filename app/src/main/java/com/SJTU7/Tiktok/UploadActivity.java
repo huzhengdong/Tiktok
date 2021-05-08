@@ -182,7 +182,7 @@ public class UploadActivity extends AppCompatActivity {
         File coverFile = new File(mediaStorageDir, coverName);
         try {
             FileOutputStream fos = new FileOutputStream(coverFile);
-            cover.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            cover.compress(Bitmap.CompressFormat.JPEG, 20, fos);
             fos.flush();
             fos.close();
         } catch (Exception e) {
