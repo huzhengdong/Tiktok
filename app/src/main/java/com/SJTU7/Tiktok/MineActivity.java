@@ -84,6 +84,7 @@ public class MineActivity extends AppCompatActivity {
                     et_add.setText("");
                     return ;
                 }
+                Toast.makeText(MineActivity.this,"该用户不存在",Toast.LENGTH_SHORT).show();
                 return;
             }
         });
