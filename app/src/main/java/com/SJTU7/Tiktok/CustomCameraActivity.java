@@ -1,4 +1,4 @@
- package com.SJTU7.Tiktok;
+package com.SJTU7.Tiktok;
 
 import android.Manifest;
 
@@ -347,3 +347,4 @@ public class CustomCameraActivity extends AppCompatActivity implements SurfaceHo
         });
     }
 }
+
