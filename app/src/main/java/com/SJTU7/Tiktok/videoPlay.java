@@ -73,21 +73,7 @@ public class videoPlay extends AppCompatActivity {
         play_stop.setImageResource(R.drawable.time_out);
         Parent_relative=findViewById(R.id.layout_R);
         //监听"播放/暂停"按钮
-        play_stop.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                if(isPlay){
-                    ((ImageButton)v).setImageResource(R.drawable.play_circle);
-                    player.pause();
 
-                }
-                else{
-                    ((ImageButton)v).setImageResource(R.drawable.time_out);
-                    player.start();
-
-                }
-                isPlay = !isPlay;
-            }
-        });
 
 
         Intent intent =getIntent();
@@ -150,19 +136,22 @@ public class videoPlay extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        play_stop.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                if(isPlay){
+                    ((ImageButton)v).setImageResource(R.drawable.play_circle);
+                    player.pause();
 
-        /*findViewById(R.id.buttonPlay).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                player.start();
+                }
+                else{
+                    ((ImageButton)v).setImageResource(R.drawable.time_out);
+                    player.start();
+                    handler.post(hideSeekBarRunnable);
+
+                }
+                isPlay = !isPlay;
             }
         });
-        findViewById(R.id.buttonPause).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                player.pause();
-            }
-        });*/
 
 
     }
@@ -176,16 +165,7 @@ public class videoPlay extends AppCompatActivity {
 
         //根据视频尺寸去计算->视频可以在sufaceView中放大的最大倍数。
         float max;
-        //max= (float) videoWidth / (float) surfaceWidth;
-        //if (getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            //竖屏模式下按视频宽度计算放大倍数值
         max = Math.max((float) videoWidth / (float) surfaceWidth, (float) videoHeight / (float) surfaceHeight);
-        //} else {
-            //横屏模式下按视频高度计算放大倍数值
-          //  max = Math.max(((float) videoWidth / (float) surfaceHeight), (float) videoHeight / (float) surfaceWidth);
-        //}
-
-        //视频宽高分别/最大倍数值 计算出放大后的视频尺寸
         videoWidth = (int) Math.ceil((float) videoWidth / max);
         videoHeight = (int) Math.ceil((float) videoHeight / max);
 
@@ -213,7 +193,7 @@ public class videoPlay extends AppCompatActivity {
                                       boolean fromUser) {
             int duration = player.getDuration();
             progress = seekBar.getProgress();
-            if (player.isPlaying()&&fromUser) {
+            if (fromUser) {
                 // 设置当前播放的位置
                 player.seekTo(duration*progress/100);
             }
@@ -275,12 +255,17 @@ public class videoPlay extends AppCompatActivity {
         int action = event.getAction();
         switch (action){
             case MotionEvent.ACTION_DOWN:
+
                 handler.removeCallbacks(hideSeekBarRunnable);
+                onClickView(play_stop);
                 textViewTime.setVisibility(View.VISIBLE);
                 textViewCurrentPosition.setVisibility(View.VISIBLE);
                 seekBar.setVisibility(View.VISIBLE);
                 play_stop.setVisibility(View.VISIBLE);
-                handler.postDelayed(hideSeekBarRunnable,3000);
+                if(isPlay)
+                {
+                    handler.post(hideSeekBarRunnable);
+                }
                 break;
             default:
                 break;
@@ -289,6 +274,18 @@ public class videoPlay extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
+    public void onClickView(View v){
+        if(isPlay){
+            ((ImageButton)v).setImageResource(R.drawable.play_circle);
+            player.pause();
 
+        }
+        else{
+            ((ImageButton)v).setImageResource(R.drawable.time_out);
+            player.start();
+
+        }
+        isPlay = !isPlay;
+    }
 
 }
