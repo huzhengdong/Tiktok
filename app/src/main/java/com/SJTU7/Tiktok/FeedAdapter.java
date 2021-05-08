@@ -93,6 +93,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.VideoViewHolde
         holder.fromTV.setText("@"+videoItem.getUserName());
         holder.contentTV.setText(videoItem.getContent());
         holder.toTV.setText("Published at: "+videoItem.getCreatedAt());
+        if(videoItem.getStudentId().equals(Constants.USER_ID))
+        {
+            holder.tv_friend.setVisibility(View.GONE);
+        }
         if(Constants.friend_id.contains(videoItem.getStudentId()))
         {
             holder.tv_friend.setText("已关注");
