@@ -124,6 +124,12 @@ public class MineActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        adapter.setData(Constants.friend_id);
+    }
+
+    @Override
     protected void onPause() {//写在onDestroy会导致没有执行完程序已经结束了 onStop也不行 可能是单例模式的问题
         super.onPause();
         editor.putString("name",Constants.USER_NAME);
